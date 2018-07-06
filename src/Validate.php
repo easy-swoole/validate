@@ -81,6 +81,44 @@ class Validate
         }
     }
 
+    private function dateBefore(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(empty($arg)){
+            $arg = date('ymd');
+        }
+        $beforeUnixTime =  strtotime($arg);
+        if(is_string($data)){
+            $unixTime  =  strtotime($data);
+            if($unixTime < $beforeUnixTime){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    private function dateAfter(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(empty($arg)){
+            $arg = date('ymd');
+        }
+        $afterUnixTime =  strtotime($arg);
+        if(is_string($data)){
+            $unixTime  =  strtotime($data);
+            if($unixTime > $afterUnixTime){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
     private function between(SplArray $splArray,string $column,$arg):bool
     {
         $data = $splArray->get($column);
@@ -116,6 +154,12 @@ class Validate
         return true;
     }
 
+    private function float(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return filter_var($data, FILTER_VALIDATE_FLOAT);
+    }
+
     private function func(SplArray $splArray,string $column,$arg):bool
     {
         return call_user_func($arg, $splArray, $column);
@@ -125,6 +169,18 @@ class Validate
     {
         $data = $splArray->get($column);
         return in_array($data,$arg);
+    }
+
+    private function integer(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return filter_var($data, FILTER_VALIDATE_INT);
+    }
+
+    private function isIp(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return filter_var($data, FILTER_VALIDATE_IP);
     }
 
     private function notEmpty(SplArray $splArray,string $column,$arg):bool
@@ -264,5 +320,11 @@ class Validate
         }else{
             return false;
         }
+    }
+
+    private function url(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return filter_var($data,FILTER_VALIDATE_URL);
     }
 }

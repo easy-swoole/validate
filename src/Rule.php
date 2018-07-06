@@ -59,11 +59,38 @@ class Rule
         return $this;
     }
 
+    function dateBefore(?string $date = null,$msg = null)
+    {
+        $this->ruleMap['dateBefore'] = [
+            'msg'=>$msg,
+            'arg'=>$date
+        ];
+        return $this;
+    }
+
+    function dateAfter(?string $date = null,$msg = null)
+    {
+        $this->ruleMap['dateAfter'] = [
+            'msg'=>$msg,
+            'arg'=>$date
+        ];
+        return $this;
+    }
+
     function equal($compare,$msg = null)
     {
         $this->ruleMap['equal'] = [
             'msg'=>$msg,
             'arg'=>$compare
+        ];
+        return $this;
+    }
+
+    function float($msg = null)
+    {
+        $this->ruleMap['func'] = [
+            'arg'=>null,
+            'msg'=>$msg
         ];
         return $this;
     }
@@ -80,6 +107,24 @@ class Rule
     function inArray(array $array,$msg = null)
     {
         $this->ruleMap['inArray'] = [
+            'arg'=>$array,
+            'msg'=>$msg
+        ];
+        return $this;
+    }
+
+    function integer($msg = null)
+    {
+        $this->ruleMap['integer'] = [
+            'arg'=>null,
+            'msg'=>$msg
+        ];
+        return $this;
+    }
+
+    function isIp(array $array,$msg = null)
+    {
+        $this->ruleMap['isIp'] = [
             'arg'=>$array,
             'msg'=>$msg
         ];
@@ -189,6 +234,15 @@ class Rule
     function timestamp($msg = null)
     {
         $this->ruleMap['timestamp'] = [
+            'arg'=>null,
+            'msg'=>$msg
+        ];
+        return $this;
+    }
+
+    function url($msg = null)
+    {
+        $this->ruleMap['url'] = [
             'arg'=>null,
             'msg'=>$msg
         ];
