@@ -17,6 +17,11 @@ class Validate
 
     protected $error;
 
+    function getError():?Error
+    {
+        return $this->error;
+    }
+
     public function addColumn(string $name,?string $alias = null,?string $errorMsg = null):Rule
     {
         $rule = new Rule();
@@ -50,8 +55,168 @@ class Validate
         return true;
     }
 
-    private function optional()
+
+    /*
+    * 以下检验方法按照首字母排序
+    */
+
+    private function activeUrl(SplArray $splArray,string $column,$arg):bool
     {
+        $data = $splArray->get($column);
+        if(is_string($data)){
+            return checkdnsrr(parse_url($data,PHP_URL_HOST));
+        }else{
+            return false;
+        }
+    }
+
+
+    private function alpha(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(is_string($data)){
+            return preg_match('/^[a-zA-Z]+$/',$data);
+        }else{
+            return false;
+        }
+    }
+
+    private function between(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        $min = array_shift($args);
+        $max = array_shift($args);
+        if(is_numeric($data) || is_string($data)){
+            if($data <= $max && $data >= $min){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    function bool(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(($data == 1) || ($data == 0)){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    private function equal(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if($data !== $arg){
+            return false;
+        }
+        return true;
+    }
+
+    private function func(SplArray $splArray,string $column,$arg):bool
+    {
+        return call_user_func($arg, $splArray, $column);
+    }
+
+    private function inArray(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return in_array($data,$arg);
+    }
+
+    private function notEmpty(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if($data === 0 || $data === '0'){
+            return true;
+        }else{
+            return !empty($data);
+        }
+    }
+
+    private function numeric(SplArray $splArray,string $column,$arg):bool
+    {
+        return is_numeric($splArray->get($column));
+    }
+
+    private function notInArray(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        return !in_array($data,$arg);
+    }
+
+    private function length(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(is_numeric($data) || is_string($data)){
+            if(strlen($data) == $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else if(is_array($data)){
+            if(count($data) == $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    private function lengthMax(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(is_numeric($data) || is_string($data)){
+            if(strlen($data) <= $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else if(is_array($data)){
+            if(count($data) <= $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    private function lengthMin(SplArray $splArray,string $column,$arg):bool
+    {
+        $data = $splArray->get($column);
+        if(is_numeric($data) || is_string($data)){
+            if(strlen($data) >= $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else if(is_array($data)){
+            if(count($data) >= $arg){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    private function max(SplArray $splArray,string $column,$arg):bool
+    {
+        if(!$this->numeric( $splArray,$column,$arg)){
+            return false;
+        }
+        $data = $splArray->get($column);
+        if($data > intval($arg)){
+            return false;
+        }
         return true;
     }
 
@@ -67,30 +232,37 @@ class Validate
         return true;
     }
 
-    private function max(SplArray $splArray,string $column,$arg):bool
+    private function optional(SplArray $splArray,string $column,$arg)
     {
-        if(!$this->numeric( $splArray,$column,$arg)){
-            return false;
-        }
-        $data = $splArray->get($column);
-        if($data > intval($arg)){
-            return false;
-        }
         return true;
     }
 
-    private function numeric(SplArray $splArray,string $column,$arg):bool
+    private function regex(SplArray $splArray,string $column,$arg):bool
     {
-        return is_numeric($splArray->get($column));
+        $data = $splArray->get($column);
+        if(is_numeric($data) || is_string($data)){
+            return preg_match($arg,$data);
+        }else{
+            return false;
+        }
     }
 
-    private function func(SplArray $splArray,string $column,$arg):bool
+    private function required(SplArray $splArray,string $column,$arg):bool
     {
-        return call_user_func($arg, $splArray, $column);
+        return isset($splArray[$column]);
     }
 
-    function getError():?Error
+    private function timestamp(SplArray $splArray,string $column,$arg):bool
     {
-        return $this->error;
+        $data = $splArray->get($column);
+        if(is_numeric($data)){
+            if(strtotime(date("d-m-Y H:i:s",$data)) === (int)$data){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
     }
 }
