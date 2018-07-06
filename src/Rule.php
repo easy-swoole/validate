@@ -37,14 +37,25 @@ class Rule
         return $this;
     }
 
-    function numeric()
+    function numeric($msg = null)
     {
-        $this->ruleMap['numeric'] = [];
+        $this->ruleMap['numeric'] = [
+            'msg'=>$msg
+        ];
         return $this;
     }
 
     function getRuleMap():array
     {
         return $this->ruleMap;
+    }
+
+    function func(callable $func,$msg = null)
+    {
+        $this->ruleMap['func'] = [
+            'arg'=>$func,
+            'msg'=>$msg
+        ];
+        return $this;
     }
 }

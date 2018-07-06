@@ -84,6 +84,11 @@ class Validate
         return is_numeric($splArray->get($column));
     }
 
+    private function func(SplArray $splArray,string $column,$arg):bool
+    {
+        return call_user_func($arg, $splArray, $column);
+    }
+
     function getError():?Error
     {
         return $this->error;
