@@ -22,7 +22,7 @@ class Validate
         return $this->error;
     }
 
-    public function addColumn(string $name,?string $alias = null,?string $errorMsg = null):Rule
+    public function addColumn(string $name,?string $errorMsg = null,?string $alias = null):Rule
     {
         $rule = new Rule();
         $this->columns[$name] = [
