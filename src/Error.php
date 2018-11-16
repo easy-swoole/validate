@@ -200,8 +200,16 @@ class Error
                     $errorMsg = str_replace(":arg{$index}", $argValue, $errorMsg);
                 }
             }
-        } else if (is_string($this->errorRuleArg)) {
-            $errorMsg = str_replace(":arg0", $this->errorRuleArg, $errorMsg);
+        } else {
+            if (is_object($this->errorRuleArg)) {
+                if (method_exists($this->errorRuleArg, '__toString')) {
+                    return str_replace(":arg0", $this->errorRuleArg->__toString(), $errorMsg);
+                } else {
+                    return str_replace(":arg0", 'OBJECT', $errorMsg);
+                }
+            } else {
+                $errorMsg = str_replace(":arg0", var_export($this->errorRuleArg, true), $errorMsg);
+            }
         }
         return $errorMsg;
     }
