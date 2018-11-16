@@ -166,6 +166,9 @@ class Validate
         $beforeUnixTime = strtotime($arg);
         if (is_string($data)) {
             $unixTime = strtotime($data);
+            if (is_bool($beforeUnixTime) || is_bool($unixTime)) {
+                return false;
+            }
             if ($unixTime < $beforeUnixTime) {
                 return true;
             } else {
@@ -192,6 +195,9 @@ class Validate
         $afterUnixTime = strtotime($arg);
         if (is_string($data)) {
             $unixTime = strtotime($data);
+            if (is_bool($afterUnixTime) || is_bool($unixTime)) {
+                return false;
+            }
             if ($unixTime > $afterUnixTime) {
                 return true;
             } else {
