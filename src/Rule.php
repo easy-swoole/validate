@@ -160,13 +160,14 @@ class Rule
     /**
      * 值是否在数组中
      * @param array $array
+     * @param bool $isStrict
      * @param null|string $msg
      * @return $this
      */
-    function inArray(array $array, $msg = null)
+    function inArray(array $array, $isStrict = false, $msg = null)
     {
         $this->ruleMap['inArray'] = [
-            'arg' => $array,
+            'arg' => [ $array, $isStrict ],
             'msg' => $msg
         ];
         return $this;
@@ -232,13 +233,14 @@ class Rule
     /**
      * 不在数组中
      * @param array $array
+     * @param bool $isStrict
      * @param null $msg
      * @return $this
      */
-    function notInArray(array $array, $msg = null)
+    function notInArray(array $array, $isStrict = false, $msg = null)
     {
         $this->ruleMap['notInArray'] = [
-            'arg' => $array,
+            'arg' => [ $array, $isStrict ],
             'msg' => $msg
         ];
         return $this;

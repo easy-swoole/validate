@@ -256,10 +256,12 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function inArray(SplArray $splArray, string $column, $arg): bool
+    private function inArray(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        return in_array($data, $arg);
+        $array = array_shift($args);
+        $isStrict = array_shift($args);
+        return in_array($data, $array, $isStrict);
     }
 
     /**
@@ -324,10 +326,12 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function notInArray(SplArray $splArray, string $column, $arg): bool
+    private function notInArray(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        return !in_array($data, $arg);
+        $array = array_shift($args);
+        $isStrict = array_shift($args);
+        return !in_array($data, $array, $isStrict);
     }
 
     /**

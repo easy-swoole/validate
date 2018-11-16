@@ -192,7 +192,8 @@ class Error
         if (is_array($this->errorRuleArg)) {
             $arrayCheckFunc = [ 'inArray', 'notInArray' ];
             if (in_array($this->errorRule, $arrayCheckFunc)) {
-                $errorMsg = str_replace(":arg0", '[' . implode(',', $this->errorRuleArg) . ']', $errorMsg);
+                $arrayValue = array_shift($this->errorRuleArg);
+                $errorMsg = str_replace(":arg0", '[' . implode(',', $arrayValue) . ']', $errorMsg);
             } else {
                 foreach ($this->errorRuleArg as $index => $arg) {
                     $argValue = is_string($arg) ? $arg : json_encode($arg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
