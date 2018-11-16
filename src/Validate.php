@@ -428,7 +428,7 @@ class Validate
             return false;
         }
         $data = $splArray->get($column);
-        if ($data > intval($arg)) {
+        if (intval($data) > $arg) {
             return false;
         }
         return true;
@@ -447,7 +447,7 @@ class Validate
             return false;
         }
         $data = $splArray->get($column);
-        if ($data < intval($arg)) {
+        if (intval($data) < $arg) {
             return false;
         }
         return true;
