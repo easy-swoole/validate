@@ -46,30 +46,24 @@ class NotInArrayTest extends BaseTestCase
      */
     function testDefaultErrorMsgCase() {
 
-        /*
-         * strict true
-         */
-        $this->freeValidate();
-        $this->validate->addColumn('fruit')->notInArray(['apple', 'grape', 'orange'], true);
-        $bool = $this->validate->validate(['fruit' => 'Apple']);
-        var_dump($bool);
-        $this->assertFalse($bool);
-        // $this->assertEquals("fruit不能在 [apple,grape,orange] 范围内", $this->validate->getError()->__toString());
-
-        /*
-         * strict false
-         */
         $this->freeValidate();
         $this->validate->addColumn('fruit')->notInArray(['apple', 'grape', 'orange']);
-        $bool = $this->validate->validate(['fruit' => 'orange']);
+        $bool = $this->validate->validate(['fruit' => 'apple']);
         $this->assertFalse($bool);
         $this->assertEquals("fruit不能在 [apple,grape,orange] 范围内", $this->validate->getError()->__toString());
+
     }
 
     /*
      * 自定义错误信息
      */
-//    function testCustomErrorMsgCase() {
-//
-//    }
+    function testCustomErrorMsgCase() {
+
+        $this->freeValidate();
+        $this->validate->addColumn('fruit')->notInArray(['apple', 'grape', 'orange'], false, '水果不能是苹果、葡萄以及橘子');
+        $bool = $this->validate->validate(['fruit' => 'apple']);
+        $this->assertFalse($bool);
+        $this->assertEquals("水果不能是苹果、葡萄以及橘子", $this->validate->getError()->__toString());
+
+    }
 }
