@@ -143,7 +143,7 @@ class Validate
     private function bool(SplArray $splArray, string $column, $arg): bool
     {
         $data = $splArray->get($column);
-        if (($data == 1) || ($data == 0)) {
+        if ($data === 1 || $data === true || $data === 0 || $data === false) {
             return true;
         } else {
             return false;
