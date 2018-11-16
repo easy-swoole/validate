@@ -50,7 +50,6 @@ class NotEmptyTest extends BaseTestCase
 
     /*
      * 默认错误信息
-
      */
     function testDefaultErrorMsgCase() {
         /*
