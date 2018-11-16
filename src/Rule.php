@@ -135,7 +135,7 @@ class Rule
      */
     function float($msg = null)
     {
-        $this->ruleMap['func'] = [
+        $this->ruleMap['float'] = [
             'arg' => null,
             'msg' => $msg
         ];
