@@ -45,8 +45,8 @@ class Rule
     function alpha($msg = null)
     {
         $this->ruleMap['alpha'] = [
-            'arg' => $msg,
-            'msg' => null
+            'arg' => null,
+            'msg' => $msg
         ];
         return $this;
     }
