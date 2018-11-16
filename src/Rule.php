@@ -193,10 +193,10 @@ class Rule
      * @param null $msg
      * @return $this
      */
-    function isIp(array $array, $msg = null)
+    function isIp($msg = null)
     {
         $this->ruleMap['isIp'] = [
-            'arg' => $array,
+            'arg' => null,
             'msg' => $msg
         ];
         return $this;
