@@ -12,7 +12,7 @@ require_once "BaseTestCase.php";
 
 /**
  * 最大值测试用例
- * Class LengthTest
+ * Class MaxTest
  * @package EasySwoole\Validate\test
  */
 class MaxTest extends BaseTestCase
