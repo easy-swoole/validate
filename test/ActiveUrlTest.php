@@ -24,7 +24,7 @@ class ActiveUrlTest extends BaseTestCase
         $this->freeValidate();
         $this->validate->addColumn('url')->activeUrl('aaa');
         $validateResult = $this->validate->validate([ 'url' => 'http://baidu.com' ]);
-        $this->assertTrue($validateResult, 'activeUrl ValidCase fail!');
+        $this->assertTrue($validateResult);
     }
 
     // 非法断言

@@ -24,19 +24,19 @@ class BetweenTest extends BaseTestCase
         $this->freeValidate();
         $this->validate->addColumn('number')->between(5, 10);
         $validateResult = $this->validate->validate([ 'number' => 6 ]);
-        $this->assertTrue($validateResult, 'activeUrl ValidCase fail!');
+        $this->assertTrue($validateResult);
 
         // 小数表示
         $this->freeValidate();
         $this->validate->addColumn('number')->between(5, 10);
         $validateResult = $this->validate->validate([ 'number' => 6.33333 ]);
-        $this->assertTrue($validateResult, 'activeUrl ValidCase fail!');
+        $this->assertTrue($validateResult);
 
         // 字符串表示
         $this->freeValidate();
         $this->validate->addColumn('number')->between(5, 10);
         $validateResult = $this->validate->validate([ 'number' => '6' ]);
-        $this->assertTrue($validateResult, 'activeUrl ValidCase fail!');
+        $this->assertTrue($validateResult);
 
         // 等于最小值
         $this->freeValidate();

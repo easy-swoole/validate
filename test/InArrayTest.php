@@ -24,7 +24,7 @@ class InArrayTest extends BaseTestCase
         $this->freeValidate();
         $this->validate->addColumn('number')->inArray([ 1, 2, 3, 4, 5 ]);
         $validateResult = $this->validate->validate([ 'number' => 5 ]);
-        $this->assertTrue($validateResult, 'activeUrl ValidCase fail!');
+        $this->assertTrue($validateResult);
     }
 
     // 非法断言
