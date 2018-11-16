@@ -51,19 +51,34 @@ class BetweenTest extends BaseTestCase
         $this->assertTrue($validateResult);
     }
 
-    // 非法断言
-    function testInvalidCase()
+    // 默认错误信息断言
+    function testDefaultErrorMsgCase()
     {
         // 不在值之间
         $this->freeValidate();
         $this->validate->addColumn('number')->between(5, 10);
         $validateResult = $this->validate->validate([ 'number' => 20 ]);
         $this->assertFalse($validateResult);
+        $this->assertEquals('number只能在 5 - 10 之间', $this->validate->getError()->__toString());
+
 
         // 不是合法值
         $this->freeValidate();
-        $this->validate->addColumn('number')->between(5, 10);
+        $this->validate->addColumn('number', '年龄')->between(5, 10);
         $validateResult = $this->validate->validate([ 'number' => 'aaa' ]);
         $this->assertFalse($validateResult);
+        $this->assertEquals('年龄只能在 5 - 10 之间', $this->validate->getError()->__toString());
+
+    }
+
+    // 自定义错误信息断言
+    function testCustomErrorMsgCase()
+    {
+        // 不在值之间
+        $this->freeValidate();
+        $this->validate->addColumn('number')->between(5, 10, '您输入的年龄不符');
+        $validateResult = $this->validate->validate([ 'number' => '!' ]);
+        $this->assertFalse($validateResult);
+        $this->assertEquals('您输入的年龄不符', $this->validate->getError()->__toString());
     }
 }
