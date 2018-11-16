@@ -8,86 +8,213 @@
 
 namespace EasySwoole\Validate;
 
-
+/**
+ * 错误消息
+ * Class Error
+ * @revise : 2018-11-15 by eValor
+ * @package EasySwoole\Validate
+ */
 class Error
 {
-    private $column;
-    private $columnData;
-    private $columnAlias;
-    private $columnErrorMsg;
+    private $field;
+    private $fieldData;
+    private $fieldAlias;
     private $errorRule;
     private $errorRuleMsg;
-    function __construct($column,$columnData,$columnAlias,$columnErrorMsg,$errorRule,$errorRuleMsg)
+    private $errorRuleArg;
+
+    private $defaultErrorMsg = [
+        'activeUrl'  => ':fieldName必须是可访问的网址',
+        'alpha'      => ':fieldName只能是字母',
+        'between'    => ':fieldName只能在 :arg0 - :arg1 之间',
+        'bool'       => ':fieldName只能是布尔值',
+        'dateBefore' => ':fieldName必须在日期 :arg0 之前',
+        'dateAfter'  => ':fieldName必须在日期 :arg0 之后',
+        'equal'      => ':fieldName必须等于:arg0',
+        'float'      => ':fieldName只能是浮点数',
+        'func'       => ':fieldName自定义验证失败',
+        'inArray'    => ':fieldName必须在 :arg0 范围内',
+        'integer'    => ':fieldName只能是整数',
+        'isIp'       => ':fieldName不是有效的IP地址',
+        'notEmpty'   => ':fieldName不能为空',
+        'numeric'    => ':fieldName只能是数字类型',
+        'notInArray' => ':fieldName不能在 :arg0 范围内',
+        'length'     => ':fieldName的长度必须是:arg0',
+        'lengthMax'  => ':fieldName长度不能超过:arg0',
+        'lengthMin'  => ':fieldName长度不能小于:arg0',
+        'max'        => ':fieldName的值不能大于:arg0',
+        'min'        => ':fieldName的值不能小于:arg0',
+        'regex'      => ':fieldName不符合指定规则',
+        'required'   => ':fieldName必须填写',
+        'timestamp'  => ':fieldName必须是一个有效的时间戳',
+        'url'        => ':fieldName必须是合法的网址',
+    ];
+
+    /**
+     * Error constructor.
+     * @param string $field 字段名称
+     * @param mixed $fieldData 字段数据
+     * @param string $fieldAlias 字段别名
+     * @param string $errorRule 触发规则名
+     * @param string $errorRuleMsg 触发规则消息
+     * @param mixed $errorRuleArg 触发规则参数
+     */
+    function __construct($field, $fieldData, $fieldAlias, $errorRule, $errorRuleMsg, $errorRuleArg)
     {
-        $this->column = $column;
-        $this->columnData = $columnData;
-        $this->columnAlias = $columnAlias;
-        $this->columnErrorMsg = $columnErrorMsg;
+        $this->field = $field;
+        $this->fieldData = $fieldData;
+        $this->fieldAlias = $fieldAlias;
         $this->errorRule = $errorRule;
         $this->errorRuleMsg = $errorRuleMsg;
+        $this->errorRuleArg = $errorRuleArg;
     }
 
     /**
-     * @return mixed
+     * 获取字段名称
+     * @return string
      */
-    public function getColumn()
+    public function getField(): string
     {
-        return $this->column;
+        return $this->field;
     }
 
     /**
-     * @return mixed
+     * 设置字段名称
+     * @param string $field
      */
-    public function getColumnData()
+    public function setField(string $field): void
     {
-        return $this->columnData;
+        $this->field = $field;
     }
 
     /**
+     * 获取字段数据
      * @return mixed
      */
-    public function getColumnAlias()
+    public function getFieldData()
     {
-        return $this->columnAlias;
+        return $this->fieldData;
     }
 
     /**
-     * @return mixed
+     * 设置字段数据
+     * @param mixed $fieldData
      */
-    public function getColumnErrorMsg()
+    public function setFieldData($fieldData): void
     {
-        return $this->columnErrorMsg;
+        $this->fieldData = $fieldData;
     }
 
     /**
-     * @return mixed
+     * 获取字段别名
+     * @return string
      */
-    public function getErrorRule()
+    public function getFieldAlias(): string
+    {
+        return $this->fieldAlias;
+    }
+
+    /**
+     * 设置字段别名
+     * @param string $fieldAlias
+     */
+    public function setFieldAlias(string $fieldAlias): void
+    {
+        $this->fieldAlias = $fieldAlias;
+    }
+
+    /**
+     * 获取触发规则名
+     * @return string
+     */
+    public function getErrorRule(): string
     {
         return $this->errorRule;
     }
 
     /**
-     * @return mixed
+     * 设置触发规则名
+     * @param string $errorRule
      */
-    public function getErrorRuleMsg()
+    public function setErrorRule(string $errorRule): void
+    {
+        $this->errorRule = $errorRule;
+    }
+
+    /**
+     * 获取触发规则消息
+     * @return string
+     */
+    public function getErrorRuleMsg(): string
     {
         return $this->errorRuleMsg;
     }
 
-    function __toString()
+    /**
+     * 设置触发规则消息
+     * @param string $errorRuleMsg
+     */
+    public function setErrorRuleMsg(string $errorRuleMsg): void
     {
-        // TODO: Implement __toString() method.
-        if(!empty($this->columnAlias)){
-            $str = $this->columnAlias;
-        }else{
-            $str = $this->column;
+        $this->errorRuleMsg = $errorRuleMsg;
+    }
+
+    /**
+     * 获取触发规则参数
+     * @return mixed
+     */
+    public function getErrorRuleArg()
+    {
+        return $this->errorRuleArg;
+    }
+
+    /**
+     * 设置触发规则参数
+     * @param mixed $errorRuleArg
+     */
+    public function setErrorRuleArg($errorRuleArg): void
+    {
+        $this->errorRuleArg = $errorRuleArg;
+    }
+
+    /**
+     * 组装默认错误消息
+     * @return mixed|string
+     */
+    private function parserDefaultErrorMsg()
+    {
+        $fieldName = empty($this->fieldAlias) ? $this->field : $this->fieldAlias;
+        if (!isset($this->defaultErrorMsg[$this->errorRule])) {
+            return "{$fieldName}参数错误";
         }
-        if(!empty($this->errorRuleMsg)){
-            $str .= $this->errorRuleMsg;
-        }else{
-            $str .= $this->columnErrorMsg;
+        $defaultErrorTpl = $this->defaultErrorMsg[$this->errorRule];
+        $errorMsg = str_replace(':fieldName', $fieldName, $defaultErrorTpl);
+        if (is_array($this->errorRuleArg)) {
+            $arrayCheckFunc = [ 'inArray', 'notInArray' ];
+            if (in_array($this->errorRule, $arrayCheckFunc)) {
+                $errorMsg = str_replace(":arg0", '[' . implode(',', $this->errorRuleArg) . ']', $errorMsg);
+            } else {
+                foreach ($this->errorRuleArg as $index => $arg) {
+                    $argValue = is_string($arg) ? $arg : json_encode($arg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                    $errorMsg = str_replace(":arg{$index}", $argValue, $errorMsg);
+                }
+            }
+        } else if (is_string($this->errorRuleArg)) {
+            $errorMsg = str_replace(":arg0", $this->errorRuleArg, $errorMsg);
         }
-        return $str;
+        return $errorMsg;
+    }
+
+    /**
+     * 返回错误消息
+     * @return string
+     */
+    public function __toString(): string
+    {
+        if (!empty($this->errorRuleMsg)) {
+            return $this->errorRuleMsg;
+        } else {
+            return $this->parserDefaultErrorMsg();
+        }
     }
 }
