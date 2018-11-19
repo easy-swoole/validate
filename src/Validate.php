@@ -22,6 +22,8 @@ class Validate
 
     protected $error;
 
+    protected $verifiedData = [];
+
     function getError(): ?Error
     {
         return $this->error;
@@ -50,6 +52,7 @@ class Validate
      */
     function validate(array $data)
     {
+        $this->verifiedData = [];
         $spl = new SplArray($data);
         foreach ($this->columns as $column => $item) {
             /** @var Rule $rule */
@@ -69,9 +72,20 @@ class Validate
                     return false;
                 }
             }
+            $this->verifiedData[$column] = $spl->get($column);
         }
         return true;
     }
+
+    /**
+     * 获取验证成功后的数据
+     * @return array
+     */
+    public function getVerifiedData(): array
+    {
+        return $this->verifiedData;
+    }
+
 
     /**
      * 给定的URL是否可以成功通讯
