@@ -431,6 +431,35 @@ class Validate
     }
 
     /**
+     * 验证数组或字符串的长度是否在一个区间里面
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $args
+     * @return bool
+     */
+    private function betweenLen(SplArray $splArray, string $column, $args): bool
+    {
+        $data = $splArray->get($column);
+        $min = array_shift($args);
+        $max = array_shift($args);
+        if (is_numeric($data) || is_string($data)) {
+            if (strlen($data) >= $min && strlen($data) <= $max) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (is_array($data)) {
+            if (strlen($data) >= $min && strlen($data) <= $max) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 验证值不大于(相等视为不通过)
      * @param SplArray $splArray
      * @param string $column
@@ -495,6 +524,18 @@ class Validate
         } else {
             return false;
         }
+    }
+
+    /**
+     * 验证字符串是否由数字构成
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     */
+    private function allDigital(SplArray $splArray, string $column): bool
+    {
+        return $this->regex($splArray, $column, '/^\d+$/');
     }
 
     /**
@@ -586,4 +627,5 @@ class Validate
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_URL);
     }
+
 }
