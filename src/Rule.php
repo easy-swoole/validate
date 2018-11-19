@@ -378,6 +378,36 @@ class Rule
     }
 
     /**
+     * 时间戳在某指定日期之前
+     * @param string $date 传入任意可被strtotime解析的字符串
+     * @param null $msg
+     * @return $this
+     */
+    function timestampBeforeDate($date, $msg = null)
+    {
+        $this->ruleMap['timestampBeforeDate'] = [
+            'arg' => $date,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
+     * 时间戳在某指定日期之后
+     * @param string $date 传入任意可被strtotime解析的字符串
+     * @param null $msg
+     * @return $this
+     */
+    function timestampAfterDate($date, $msg = null)
+    {
+        $this->ruleMap['timestampAfterDate'] = [
+            'arg' => $date,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
      * 值是一个合法的链接
      * @param null $msg
      * @return $this

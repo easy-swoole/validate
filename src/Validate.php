@@ -531,6 +531,51 @@ class Validate
     }
 
     /**
+     * 时间戳在某指定日期之前
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     */
+    private function timestampBeforeDate(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data)) {
+            $time = strtotime($arg);
+            if ($time !== false && $time > 0 && $time > $data) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 时间戳在某指定日期之后
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     */
+    private function timestampAfterDate(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data)) {
+            $time = strtotime($arg);
+            if ($time !== false && $time > 0 && $time < $data) {
+                var_dump('true');
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 值是一个合法的链接
      * @param SplArray $splArray
      * @param string $column
