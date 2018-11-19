@@ -64,6 +64,7 @@ class Validate
              * 如果设置了optional又不存在对应字段，则跳过该字段检测
              */
             if (isset($rules['optional']) && !isset($data[$column])) {
+                $this->verifiedData[$column] = $spl->get($column);
                 continue;
             }
             foreach ($rules as $rule => $ruleInfo) {
