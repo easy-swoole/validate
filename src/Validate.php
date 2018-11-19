@@ -565,7 +565,6 @@ class Validate
         if (is_numeric($data)) {
             $time = strtotime($arg);
             if ($time !== false && $time > 0 && $time < $data) {
-                var_dump('true');
                 return true;
             } else {
                 return false;
