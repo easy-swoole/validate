@@ -292,6 +292,23 @@ class Rule
     }
 
     /**
+     * 验证数组或字符串的长度是否在一个范围内
+     * @param null $msg
+     * @return $this
+     */
+    function betweenLen(int $min, int $max, $msg = null)
+    {
+        $this->ruleMap['betweenLen'] = [
+            'msg' => $msg,
+            'arg' => [
+                $min,
+                $max
+            ]
+        ];
+        return $this;
+    }
+
+    /**
      * 验证值不大于(相等视为不通过)
      * @param int $max
      * @param null|string $msg
@@ -415,6 +432,20 @@ class Rule
     function url($msg = null)
     {
         $this->ruleMap['url'] = [
+            'arg' => null,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
+     * 值是一个合法的链接
+     * @param null $msg
+     * @return $this
+     */
+    function allDigital($msg = null)
+    {
+        $this->ruleMap['allDigital'] = [
             'arg' => null,
             'msg' => $msg
         ];
