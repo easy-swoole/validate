@@ -292,6 +292,36 @@ class Rule
     }
 
     /**
+     * 以GBK编码验证数组或字符串的字节长度是否超出
+     * @param int  $lengthMax
+     * @param null $msg
+     * @return $this
+     */
+    function lengthbMax(int $lengthMax, $msg = null)
+    {
+        $this->ruleMap['lengthbMax'] = [
+            'msg' => $msg,
+            'arg' => $lengthMax,
+        ];
+        return $this;
+    }
+
+    /**
+     * 以GBK编码验证数组或字符串的字节长度是否达到
+     * @param int  $lengthMin
+     * @param null $msg
+     * @return $this
+     */
+    function lengthbMin(int $lengthMin, $msg = null)
+    {
+        $this->ruleMap['lengthbMin'] = [
+            'msg' => $msg,
+            'arg' => $lengthMin,
+        ];
+        return $this;
+    }
+
+    /**
      * 验证数组或字符串的长度是否在一个范围内
      * @param null $msg
      * @return $this

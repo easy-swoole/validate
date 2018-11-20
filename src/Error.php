@@ -42,6 +42,8 @@ class Error
         'length'     => ':fieldName的长度必须是:arg0',
         'lengthMax'  => ':fieldName长度不能超过:arg0',
         'lengthMin'  => ':fieldName长度不能小于:arg0',
+        'lengthbMax' => ':fieldName字节长度不能超过:arg0',
+        'lengthbMin' => ':fieldName字节长度不能小于:arg0',
         'betweenLen' => ':fieldName的长度只能在 :arg0 - :arg1 之间',
         'max'        => ':fieldName的值不能大于:arg0',
         'min'        => ':fieldName的值不能小于:arg0',
@@ -185,7 +187,7 @@ class Error
      */
     private function parserDefaultErrorMsg()
     {
-        $fieldName = empty($this->fieldAlias) ? $this->field : $this->fieldAlias;
+        $fieldName = empty($this->fieldAlias) ? $this->field : $this->fieldAlias . "(" . str_replace('.', '->', $this->field) . ")";
         if (!isset($this->defaultErrorMsg[$this->errorRule])) {
             return "{$fieldName}参数错误";
         }

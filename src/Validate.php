@@ -398,6 +398,8 @@ class Validate
             } else {
                 return false;
             }
+        } else if (is_null($data)) {
+            return true;
         } else {
             return false;
         }
@@ -415,6 +417,62 @@ class Validate
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
             if (strlen($data) >= $arg) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (is_array($data)) {
+            if (count($data) >= $arg) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 以GBK编码验证数组或字符串的字节长度是否超出
+     * @param SplArray $splArray
+     * @param string   $column
+     * @param          $arg
+     * @return bool
+     */
+    private function lengthbMax(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data) || is_string($data)) {
+            if (mb_strlen($data, 'gbk') <= $arg) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (is_array($data)) {
+            if (count($data) <= $arg) {
+                return true;
+            } else {
+                return false;
+            }
+        } else if (is_null($data)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 以GBK编码验证数组或字符串的字节长度是否达到
+     * @param SplArray $splArray
+     * @param string   $column
+     * @param          $arg
+     * @return bool
+     */
+    private function lengthbMin(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data) || is_string($data)) {
+            if (mb_strlen($data, 'gbk') >= $arg) {
                 return true;
             } else {
                 return false;
@@ -449,7 +507,7 @@ class Validate
                 return false;
             }
         } else if (is_array($data)) {
-            if (strlen($data) >= $min && strlen($data) <= $max) {
+            if (count($data) >= $min && count($data) <= $max) {
                 return true;
             } else {
                 return false;
