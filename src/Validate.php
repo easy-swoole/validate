@@ -605,7 +605,8 @@ class Validate
      */
     private function required(SplArray $splArray, string $column, $arg): bool
     {
-        return isset($splArray[$column]);
+        $data = $splArray->get($column);
+        return !is_null($data);
     }
 
     /**
