@@ -51,6 +51,24 @@ class Rule
         return $this;
     }
 
+    function alphaNum($msg = null)
+    {
+        $this->ruleMap['alphaNum'] = [
+            'arg' => null,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    function alphaDash($msg = null)
+    {
+        $this->ruleMap['alphaDash'] = [
+            'arg' => null,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
     /**
      * 给定的参数是否在 $min $max 之间
      * @param integer $min 最小值 不包含该值

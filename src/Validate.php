@@ -126,6 +126,40 @@ class Validate
     }
 
     /**
+     * 给定的参数是否是字母和数字组成 即[a-zA-Z0-9]
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     */
+    private function alphaNum(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_string($data)) {
+            return preg_match('/^[a-zA-Z0-9]+$/', $data);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 给定的参数是否是字母和数字下划线破折号组成 即[a-zA-Z0-9\-\_]
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     */
+    private function alphaDash(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_string($data)) {
+            return preg_match('/^[a-zA-Z0-9\-\_]+$/', $data);
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * 给定的参数是否在 $min $max 之间
      * @param SplArray $splArray
      * @param string $column

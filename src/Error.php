@@ -26,6 +26,8 @@ class Error
     private $defaultErrorMsg = [
         'activeUrl'  => ':fieldName必须是可访问的网址',
         'alpha'      => ':fieldName只能是字母',
+        'alphaNum'   => ':fieldName只能是字母和数字',
+        'alphaDash'  => ':fieldName只能是字母数字下划线和破折号',
         'between'    => ':fieldName只能在 :arg0 - :arg1 之间',
         'bool'       => ':fieldName只能是布尔值',
         'dateBefore' => ':fieldName必须在日期 :arg0 之前',
