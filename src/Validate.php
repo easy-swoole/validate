@@ -439,7 +439,7 @@ class Validate
      * @param          $arg
      * @return bool
      */
-    private function lengthbMax(SplArray $splArray, string $column, $arg): bool
+    private function bitLengthMax(SplArray $splArray, string $column, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
@@ -468,7 +468,7 @@ class Validate
      * @param          $arg
      * @return bool
      */
-    private function lengthbMin(SplArray $splArray, string $column, $arg): bool
+    private function bitLengthMin(SplArray $splArray, string $column, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {

@@ -297,9 +297,9 @@ class Rule
      * @param null $msg
      * @return $this
      */
-    function lengthbMax(int $lengthMax, $msg = null)
+    function bitLengthMax(int $lengthMax, $msg = null)
     {
-        $this->ruleMap['lengthbMax'] = [
+        $this->ruleMap['bitLengthMax'] = [
             'msg' => $msg,
             'arg' => $lengthMax,
         ];
@@ -312,9 +312,9 @@ class Rule
      * @param null $msg
      * @return $this
      */
-    function lengthbMin(int $lengthMin, $msg = null)
+    function bitLengthMin(int $lengthMin, $msg = null)
     {
-        $this->ruleMap['lengthbMin'] = [
+        $this->ruleMap['bitLengthMin'] = [
             'msg' => $msg,
             'arg' => $lengthMin,
         ];
