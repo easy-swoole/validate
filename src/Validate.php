@@ -539,7 +539,7 @@ class Validate
      * @param          $arg
      * @return false|int
      */
-    function money(SplArray $splArray, string $column, $arg)
+    private function money(SplArray $splArray, string $column, $arg)
     {
         if (is_null($arg)) $arg = '';
         $data = $splArray->get($column);
