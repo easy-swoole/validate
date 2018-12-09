@@ -102,6 +102,21 @@ class Rule
     }
 
     /**
+     * 给定参数是否为小数格式
+     * @param null|integer $precision 规定小数点位数 null 为不规定
+     * @param null $msg
+     * @return $this
+     */
+    function decimal(?int $precision = null, $msg = null)
+    {
+        $this->ruleMap['decimal'] = [
+            'msg' => $msg,
+            'arg' => $precision
+        ];
+        return $this;
+    }
+
+    /**
      * 给定参数是否在某日期之前
      * @param null|string $date
      * @param null|string $msg
@@ -357,6 +372,22 @@ class Rule
     }
 
     /**
+     * 验证值是合法的金额
+     * 100 | 100.1 | 100.01
+     * @param integer|null $precision 小数点位数
+     * @param string|null  $msg
+     * @return Rule
+     */
+    function money(?int $precision = null, string $msg = null): Rule
+    {
+        $this->ruleMap['money'] = [
+            'arg' => $precision,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
      * 设置值为可选参数
      * @return $this
      */
@@ -437,6 +468,36 @@ class Rule
     {
         $this->ruleMap['timestampAfterDate'] = [
             'arg' => $date,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
+     * 指定时间戳在某时间戳之前
+     * @param string|integer $beforeTimestamp 在该时间戳之前
+     * @param null $msg
+     * @return $this
+     */
+    function timestampBefore($beforeTimestamp, $msg = null)
+    {
+        $this->ruleMap['timestampBefore'] = [
+            'arg' => $beforeTimestamp,
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
+     * 指定时间戳在某时间戳之后
+     * @param string|integer $afterTimestamp 在该时间戳之后
+     * @param null $msg
+     * @return $this
+     */
+    function timestampAfter($afterTimestamp, $msg = null)
+    {
+        $this->ruleMap['timestampAfter'] = [
+            'arg' => $afterTimestamp,
             'msg' => $msg
         ];
         return $this;

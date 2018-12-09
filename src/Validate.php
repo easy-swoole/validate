@@ -200,6 +200,26 @@ class Validate
     }
 
     /**
+     * 给定参数是否合法的小数
+     * @param SplArray     $splArray
+     * @param string       $column
+     * @param null|integer $arg
+     */
+    private function decimal(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = strval($splArray->get($column));
+        if (is_null($arg)) {
+            return filter_var($data, FILTER_VALIDATE_FLOAT);
+        } elseif (intval($arg) === 0) {
+            // 容错处理 如果小数点后设置0位 则验整数
+            return filter_var($data, FILTER_VALIDATE_INT);
+        } else {
+            $regex = '/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . $arg . '})?$/';
+            return preg_match($regex, $data);
+        }
+    }
+
+    /**
      * 给定参数是否在某日期之前
      * @param SplArray $splArray
      * @param string $column
@@ -513,6 +533,21 @@ class Validate
     }
 
     /**
+     * 给定值是否一个合法的金额
+     * @param SplArray $splArray
+     * @param string   $column
+     * @param          $arg
+     * @return false|int
+     */
+    function money(SplArray $splArray, string $column, $arg)
+    {
+        if (is_null($arg)) $arg = '';
+        $data = $splArray->get($column);
+        $regex = '/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . $arg . '})?$/';
+        return preg_match($regex, $data);
+    }
+
+    /**
      * 验证值不小于(相等视为不通过)
      * @param SplArray $splArray
      * @param string $column
@@ -644,6 +679,40 @@ class Validate
             } else {
                 return false;
             }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 时间戳是否在某时间戳之前
+     * @param SplArray $splArray
+     * @param string   $column
+     * @param          $arg
+     * @return bool
+     */
+    private function timestampBefore(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data) && is_numeric($arg)) {
+            return intval($data) < intval($arg);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * 时间戳是否在某时间戳之后
+     * @param SplArray $splArray
+     * @param string   $column
+     * @param          $arg
+     * @return bool
+     */
+    private function timestampAfter(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (is_numeric($data) && is_numeric($arg)) {
+            return intval($data) > intval($arg);
         } else {
             return false;
         }
