@@ -209,10 +209,10 @@ class Validate
     {
         $data = strval($splArray->get($column));
         if (is_null($arg)) {
-            return filter_var($data, FILTER_VALIDATE_FLOAT);
+            return filter_var($data, FILTER_VALIDATE_FLOAT) !== false;
         } elseif (intval($arg) === 0) {
             // 容错处理 如果小数点后设置0位 则验整数
-            return filter_var($data, FILTER_VALIDATE_INT);
+            return filter_var($data, FILTER_VALIDATE_INT) !== false;
         } else {
             $regex = '/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . $arg . '})?$/';
             return preg_match($regex, $data);
@@ -303,7 +303,7 @@ class Validate
     private function float(SplArray $splArray, string $column, $arg): bool
     {
         $data = $splArray->get($column);
-        return filter_var($data, FILTER_VALIDATE_FLOAT);
+        return filter_var($data, FILTER_VALIDATE_FLOAT) !== false;
     }
 
     /**
@@ -343,7 +343,7 @@ class Validate
     private function integer(SplArray $splArray, string $column, $arg): bool
     {
         $data = $splArray->get($column);
-        return filter_var($data, FILTER_VALIDATE_INT);
+        return filter_var($data, FILTER_VALIDATE_INT) !== false;
     }
 
     /**
