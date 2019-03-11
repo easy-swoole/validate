@@ -525,8 +525,8 @@ class Validate
         if (!$this->numeric($splArray, $column, $arg)) {
             return false;
         }
-        $data = $splArray->get($column);
-        if (intval($data) > $arg) {
+        $data = $splArray->get($column) * 1;
+        if ($data > $arg) {
             return false;
         }
         return true;
@@ -559,8 +559,8 @@ class Validate
         if (!$this->numeric($splArray, $column, $arg)) {
             return false;
         }
-        $data = $splArray->get($column);
-        if (intval($data) < $arg) {
+        $data = $splArray->get($column) * 1;
+        if ($data < $arg) {
             return false;
         }
         return true;
