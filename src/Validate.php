@@ -514,7 +514,7 @@ class Validate
     }
 
     /**
-     * 验证值不大于(相等视为不通过)
+     * 验证值不大于(相等视为通过)
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -548,7 +548,7 @@ class Validate
     }
 
     /**
-     * 验证值不小于(相等视为不通过)
+     * 验证值不小于(相等视为通过)
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
