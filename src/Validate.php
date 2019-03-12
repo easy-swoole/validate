@@ -503,7 +503,7 @@ class Validate
                 return false;
             }
         } else if (is_array($data)) {
-            if (strlen($data) >= $min && strlen($data) <= $max) {
+            if (count($data) >= $min && count($data) <= $max) {
                 return true;
             } else {
                 return false;
