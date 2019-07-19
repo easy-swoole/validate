@@ -62,8 +62,9 @@ class Validate
             /*
              * 优先检测是否带有optional选项
              * 如果设置了optional又不存在对应字段，则跳过该字段检测
+             * 额外的如果这个字段是空字符串一样会认为不存在该字段
              */
-            if (isset($rules['optional']) && !isset($data[$column])) {
+            if (isset($rules['optional']) && (!isset($data[$column]) || $data[$column] === '')) {
                 $this->verifiedData[$column] = $spl->get($column);
                 continue;
             }
