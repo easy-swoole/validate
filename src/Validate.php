@@ -33,11 +33,12 @@ class Validate
      * 添加一个待验证字段
      * @param string $name
      * @param null|string $alias
+     * @param bool $reset
      * @return Rule
      */
-    public function addColumn(string $name, ?string $alias = null): Rule
+    public function addColumn(string $name, ?string $alias = null,bool $reset = false): Rule
     {
-        if(!isset($this->columns[$name])){
+        if(!isset($this->columns[$name]) || $reset){
             $rule = new Rule();
             $this->columns[$name] = [
                 'alias' => $alias,
