@@ -37,12 +37,14 @@ class Validate
      */
     public function addColumn(string $name, ?string $alias = null): Rule
     {
-        $rule = new Rule();
-        $this->columns[$name] = [
-            'alias' => $alias,
-            'rule'  => $rule
-        ];
-        return $rule;
+        if(!isset($this->columns[$name])){
+            $rule = new Rule();
+            $this->columns[$name] = [
+                'alias' => $alias,
+                'rule'  => $rule
+            ];
+        }
+        return $this->columns[$name];
     }
 
     /**
