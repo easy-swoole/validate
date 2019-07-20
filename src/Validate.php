@@ -45,7 +45,7 @@ class Validate
                 'rule'  => $rule
             ];
         }
-        return $this->columns[$name];
+        return $this->columns[$name]['rule'];
     }
 
     /**
