@@ -137,6 +137,9 @@ class CustomValidator implements \EasySwoole\Validate\ValidateInterface
      */
     public function equalEighteen($args)
     {
+        if ($args['columnValue'] == 18){
+            return true;
+        }
         $msg = '只允许18岁的进入';
         $msg = $args['columnParams']['name'] ? $args['columnParams']['name'] . $msg : $msg;
         $this->setErrorMsg($msg); // 优先自定义错误消息
