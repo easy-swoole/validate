@@ -92,3 +92,70 @@ if ($bool) {
  * 输出结果： string(23) "只允许18岁的进入"
  */
 ```
+
+## 自定义验证器类
+
+自定义验证器类错误例子
+
+```php
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Heelie
+ * Date: 19-12-27
+ * Time: 下午15:52
+ */
+
+require_once "./vendor/autoload.php";
+
+class CustomValidator implements \EasySwoole\Validate\ValidateInterface
+{
+    private $error;
+    /**
+     * 返回错误消息
+     * @return string
+     */
+    public function getErrorMsg(): string
+    {
+        return $this->error;
+    }
+
+    public function setErrorMsg($msg): object
+    {
+        $this->error = $msg;
+        return $this;
+    }
+
+    /**
+     * @param $args = [
+     *      'columnName'   => string,       // 字段
+     *      'columnValue'  => string|array, // 字段值
+     *      'columnAlias'  => '',  //alias  // 字段别名
+     *      'columnParams' => [],  //params // 参数
+     * ];
+     * @return \EasySwoole\Validate\ValidateInterface|boolean
+     */
+    public function equalEighteen($args)
+    {
+        $msg = '只允许18岁的进入';
+        $msg = $args['columnParams']['name'] ? $args['columnParams']['name'] . $msg : $msg;
+        $this->setErrorMsg($msg); // 优先自定义错误消息
+        return $this;
+    }
+}
+$data     = ['name' => 'blank', 'age' => 25];   // 验证数据
+$validate = new \EasySwoole\Validate\Validate(CustomValidator::class);
+$validate->addColumn('name')->required('名字不为空');   // 给字段加上验证规则
+// 自定义错误消息示例
+// $validate->addColumn('age')->required('年龄不为空')->equalEighteen(['name' => $data['name']], '只有18岁的才能进入');
+$validate->addColumn('age')->required('年龄不为空')->equalEighteen(['name' => $data['name']]);
+$bool = $validate->validate($data); // 验证结果
+if ($bool) {
+    var_dump("验证通过");
+} else {
+    var_dump($validate->getError()->__toString());
+}
+/*
+ * 输出结果：string(28) "blank只允许18岁的进入"
+ */
+```
