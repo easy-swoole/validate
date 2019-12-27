@@ -99,15 +99,18 @@ class Validate
                 //自定义验证类处理
                 if (!is_null($customValidator) && $customValidator->hasMethod($rule)) {
                     try {
-                        $params = array_merge([
-                            'columnName'  => $column,
-                            'columnValue' => $spl->get($column),
-                            'columnAlias' => $item['alias'],
-                        ], $ruleInfo['arg'][0]);
+                        $params = [
+                            'columnName'   => $column,
+                            'columnValue'  => $spl->get($column),
+                            'columnAlias'  => $item['alias'],
+                            'columnParams' => array_shift($ruleInfo['arg']),
+                        ];
                         /** @var ValidateInterface $result */
-                        $result = $customValidator->getMethod($rule)->invoke(new $this->customValidator, $params);
+                        $result = $customValidator->getMethod($rule)->invoke($customValidator->newInstance(), $params);
                         if ($result !== true) {// 不全等 true 则为验证失败
-                            $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $result->getErrorMsg(), $ruleInfo['arg']);
+                            $msg = array_pop($ruleInfo['arg']);
+                            $msg = (is_string($msg) && !empty($msg)) ? $msg : $result->getErrorMsg();
+                            $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
                             return false;
                         }
                     } catch (\ReflectionException $reflectionException) {
