@@ -24,6 +24,20 @@ class Rule
     }
 
     /**
+     * 自定义验证器调用
+     * @param $name
+     * @param $arguments
+     * @return $this
+     */
+    public function __call($name, $arguments)
+    {
+        $this->ruleMap[$name] = [
+            'arg' => $arguments,
+        ];
+        return $this;
+    }
+
+    /**
      * 给定的URL是否可以成功通讯
      * @param null|string $msg
      * @return $this

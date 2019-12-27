@@ -24,6 +24,13 @@ class Validate
 
     protected $verifiedData = [];
 
+    protected $customValidator;
+
+    public function __construct($customValidator = null)
+    {
+        $this->customValidator = $customValidator;
+    }
+
     function getError(): ?Error
     {
         return $this->error;
@@ -52,11 +59,28 @@ class Validate
      * 验证字段是否合法
      * @param array $data
      * @return bool
+     * @throws \ReflectionException
      */
     function validate(array $data)
     {
         $this->verifiedData = [];
         $spl = new SplArray($data);
+
+        //添加自定义验证类检查
+        $customValidator = null;
+        if (!is_null($this->customValidator)) {
+            try {
+                $customValidator = new \ReflectionClass($this->customValidator);
+                if (!$customValidator->isSubclassOf(ValidateInterface::class)) {
+                    $customValidator = null;
+                }
+            } catch (\ReflectionException $throwable) {
+                //todo not found error
+                throw $throwable;
+                // $customValidator = null;
+            }
+        }
+
         foreach ($this->columns as $column => $item) {
             /** @var Rule $rule */
             $rule = $item['rule'];
@@ -72,7 +96,23 @@ class Validate
                 continue;
             }
             foreach ($rules as $rule => $ruleInfo) {
-                if ($rule === 'func') { // 如果当前是一个Func 那么可以直接Call这个Func进行判断
+                //自定义验证类处理
+                if (!is_null($customValidator) && $customValidator->hasMethod($rule)) {
+                    try {
+                        $params = array_merge([
+                            'columnName'  => $column,
+                            'columnValue' => $spl->get($column),
+                            'columnAlias' => $item['alias'],
+                        ], $ruleInfo['arg'][0]);
+                        /** @var ValidateInterface $result */
+                        $result = $customValidator->getMethod($rule)->invoke(new $this->customValidator, $params);
+                        if ($result !== true) {// 不全等 true 则为验证失败
+                            $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $result->getErrorMsg(), $ruleInfo['arg']);
+                            return false;
+                        }
+                    } catch (\ReflectionException $reflectionException) {
+                    }
+                } else if ($rule === 'func') { // 如果当前是一个Func 那么可以直接Call这个Func进行判断
                     $result = call_user_func($ruleInfo['arg'], $spl, $column);
                     if ($result !== true) {  // 不全等 true 则为验证失败
                         $resultErr = strval($result);
