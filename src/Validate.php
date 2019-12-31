@@ -108,8 +108,7 @@ class Validate
                         /** @var ValidateInterface $result */
                         $result = $customValidator->getMethod($rule)->invoke($customValidator->newInstance(), $params);
                         if ($result !== true) {// 不全等 true 则为验证失败
-                            $msg = array_pop($ruleInfo['arg']);
-                            $msg = (is_string($msg) && !empty($msg)) ? $msg : $result->getErrorMsg();
+                            $msg = $result->getErrorMsg();
                             $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
                             return false;
                         }
