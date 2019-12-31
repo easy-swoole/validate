@@ -110,19 +110,20 @@ require_once "./vendor/autoload.php";
 
 class CustomValidator implements \EasySwoole\Validate\ValidateInterface
 {
-    private $error;
+    private $errorMsg;
+
     /**
      * 返回错误消息
      * @return string
      */
     public function getErrorMsg(): string
     {
-        return $this->error;
+        return $this->errorMsg;
     }
 
-    public function setErrorMsg($msg): object
+    public function setErrorMsg($msg): CustomValidator
     {
-        $this->error = $msg;
+        $this->errorMsg = $msg;
         return $this;
     }
 
@@ -135,23 +136,21 @@ class CustomValidator implements \EasySwoole\Validate\ValidateInterface
      * ];
      * @return \EasySwoole\Validate\ValidateInterface|boolean
      */
-    public function equalEighteen($args)
+    public function mobile($args)
     {
-        if ($args['columnValue'] == 18){
+        $regular = '/^((13[0-9])|(14[5,7,9])|(15[^4])|(18[0-9])|(17[0,1,3,5,6,7,8]))\\d{8}$/';
+        if (preg_match($regular, $args['columnValue'])) {
             return true;
         }
-        $msg = '只允许18岁的进入';
-        $msg = $args['columnParams']['name'] ? $args['columnParams']['name'] . $msg : $msg;
-        $this->setErrorMsg($msg); // 优先自定义错误消息
-        return $this;
+        $msg = $args['columnParams']['errorMsg'] ?: '手机号验证未通过';
+        return $this->setErrorMsg($msg);
     }
 }
-$data     = ['name' => 'blank', 'age' => 25];   // 验证数据
+
+$data     = ['mobile' => '12312345678'];   // 验证数据
 $validate = new \EasySwoole\Validate\Validate(CustomValidator::class);
-$validate->addColumn('name')->required('名字不为空');   // 给字段加上验证规则
 // 自定义错误消息示例
-// $validate->addColumn('age')->required('年龄不为空')->equalEighteen(['name' => $data['name']], '只有18岁的才能进入');
-$validate->addColumn('age')->required('年龄不为空')->equalEighteen(['name' => $data['name']]);
+$validate->addColumn('mobile')->required('手机号不能为空')->mobile(['errorMsg' => '手机号格式不正确']);
 $bool = $validate->validate($data); // 验证结果
 if ($bool) {
     var_dump("验证通过");
@@ -159,6 +158,6 @@ if ($bool) {
     var_dump($validate->getError()->__toString());
 }
 /*
- * 输出结果：string(28) "blank只允许18岁的进入"
+ * 输出结果：string(24) "手机号格式不正确"
  */
 ```
