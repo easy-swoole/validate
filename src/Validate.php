@@ -72,11 +72,21 @@ class Validate
                 continue;
             }
             foreach ($rules as $rule => $ruleInfo) {
-                if ($rule === 'func') { // 如果当前是一个Func 那么可以直接Call这个Func进行判断
+                if ($rule === 'func') {
+                    // 如果当前是一个Func 那么可以直接Call这个Func进行判断
                     $result = call_user_func($ruleInfo['arg'], $spl, $column);
                     if ($result !== true) {  // 不全等 true 则为验证失败
                         $resultErr = strval($result);
                         $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $resultErr, $ruleInfo['arg']);
+                        return false;
+                    }
+                } else if(is_string($rule)){
+                    /** @var RuleInterface $userRule */
+                    $userRule = $ruleInfo['userRule'];
+                    $msg = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
+                    if($msg !== null)
+                    {
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
                         return false;
                     }
                 }else if (!call_user_func([ $this, $rule ], $spl, $column, $ruleInfo['arg'])) {

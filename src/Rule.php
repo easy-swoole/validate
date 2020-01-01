@@ -22,6 +22,18 @@ class Rule
     {
         return $this->ruleMap;
     }
+    /*
+     * 执行自定义的
+     */
+    function callUserRule(RuleInterface $rule,$msg = null,...$args)
+    {
+        $this->ruleMap[$rule->name()] = [
+            'arg' => $args,
+            'msg' => $msg,
+            'userRule'=>$rule
+        ];
+        return $this;
+    }
 
     /**
      * 给定的URL是否可以成功通讯
