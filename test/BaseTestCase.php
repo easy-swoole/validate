@@ -37,8 +37,8 @@ class BaseTestCase extends \PHPUnit\Framework\TestCase
     }
 
     // 释放并初始化验证器
-    function freeValidate($customValidator = null)
+    function freeValidate()
     {
-        $this->validate = new Validate($customValidator);
+        $this->validate = new Validate;
     }
 }

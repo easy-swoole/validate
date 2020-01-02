@@ -24,13 +24,6 @@ class Validate
 
     protected $verifiedData = [];
 
-    protected $customValidator;
-
-    public function __construct($customValidator = null)
-    {
-        $this->customValidator = $customValidator;
-    }
-
     function getError(): ?Error
     {
         return $this->error;
@@ -59,27 +52,11 @@ class Validate
      * 验证字段是否合法
      * @param array $data
      * @return bool
-     * @throws \ReflectionException
      */
     function validate(array $data)
     {
         $this->verifiedData = [];
         $spl = new SplArray($data);
-
-        //添加自定义验证类检查
-        $customValidator = null;
-        if (!is_null($this->customValidator)) {
-            try {
-                $customValidator = new \ReflectionClass($this->customValidator);
-                if (!$customValidator->isSubclassOf(ValidateInterface::class)) {
-                    $customValidator = null;
-                }
-            } catch (\ReflectionException $throwable) {
-                //todo not found error
-                throw $throwable;
-                // $customValidator = null;
-            }
-        }
 
         foreach ($this->columns as $column => $item) {
             /** @var Rule $rule */
@@ -97,22 +74,14 @@ class Validate
             }
             foreach ($rules as $rule => $ruleInfo) {
                 //自定义验证类处理
-                if (!is_null($customValidator) && $customValidator->hasMethod($rule)) {
-                    try {
-                        $params = [
-                            'columnName'   => $column,
-                            'columnValue'  => $spl->get($column),
-                            'columnAlias'  => $item['alias'],
-                            'columnParams' => array_shift($ruleInfo['arg']),
-                        ];
-                        /** @var ValidateInterface $result */
-                        $result = $customValidator->getMethod($rule)->invoke($customValidator->newInstance(), $params);
-                        if ($result !== true) {// 不全等 true 则为验证失败
-                            $msg = $result->getErrorMsg();
-                            $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
-                            return false;
-                        }
-                    } catch (\ReflectionException $reflectionException) {
+                if (!method_exists($this, $rule)) {
+                    /** @var ValidateInterface $userRule */
+                    $userRule = $ruleInfo['userRule'];
+                    $msg      = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
+                    if ($msg !== null) {
+                        $msg         = $ruleInfo['msg'] ?: $msg;
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
+                        return false;
                     }
                 } else if ($rule === 'func') { // 如果当前是一个Func 那么可以直接Call这个Func进行判断
                     $result = call_user_func($ruleInfo['arg'], $spl, $column);

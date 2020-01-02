@@ -110,47 +110,38 @@ require_once "./vendor/autoload.php";
 
 class CustomValidator implements \EasySwoole\Validate\ValidateInterface
 {
-    private $errorMsg;
-
     /**
-     * 返回错误消息
+     * 返回当前校验规则的名字
      * @return string
      */
-    public function getErrorMsg(): string
+    public function name(): string
     {
-        return $this->errorMsg;
-    }
-
-    public function setErrorMsg($msg): CustomValidator
-    {
-        $this->errorMsg = $msg;
-        return $this;
+        return 'mobile';
     }
 
     /**
-     * @param $args = [
-     *      'columnName'   => string,       // 字段
-     *      'columnValue'  => string|array, // 字段值
-     *      'columnAlias'  => '',  //alias  // 字段别名
-     *      'columnParams' => [],  //params // 参数
-     * ];
-     * @return \EasySwoole\Validate\ValidateInterface|boolean
+     * 检验失败返回错误信息即可
+     *
+     * @param \EasySwoole\Spl\SplArray $spl
+     * @param string $column
+     * @param mixed ...$args
+     * @return string|null
      */
-    public function mobile($args)
+    public function validate(\EasySwoole\Spl\SplArray $spl, $column, ...$args): ?string
     {
         $regular = '/^((13[0-9])|(14[5,7,9])|(15[^4])|(18[0-9])|(17[0,1,3,5,6,7,8]))\\d{8}$/';
-        if (preg_match($regular, $args['columnValue'])) {
-            return true;
+        if (!preg_match($regular, $spl->get($column))) {
+            return '手机号验证未通过';
         }
-        $msg = $args['columnParams']['errorMsg'] ?: '手机号验证未通过';
-        return $this->setErrorMsg($msg);
+        return null;
     }
 }
 
-$data     = ['mobile' => '12312345678'];   // 验证数据
-$validate = new \EasySwoole\Validate\Validate(CustomValidator::class);
+// 待验证数据
+$data     = ['mobile' => '12312345678'];
+$validate = new \EasySwoole\Validate\Validate();
 // 自定义错误消息示例
-$validate->addColumn('mobile')->required('手机号不能为空')->mobile(['errorMsg' => '手机号格式不正确']);
+$validate->addColumn('mobile')->required('手机号不能为空')->callUserRule(new CustomValidator, '手机号格式不正确');
 $bool = $validate->validate($data); // 验证结果
 if ($bool) {
     var_dump("验证通过");
