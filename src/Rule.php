@@ -22,15 +22,20 @@ class Rule
     {
         return $this->ruleMap;
     }
-    /*
-     * 执行自定义的
+
+    /**
+     * 自定义验证器调用
+     * @param ValidateInterface $rule
+     * @param null $msg
+     * @param mixed ...$args
+     * @return $this
      */
-    function callUserRule(RuleInterface $rule,$msg = null,...$args)
+    public function callUserRule(ValidateInterface $rule, $msg = null, ...$args)
     {
         $this->ruleMap[$rule->name()] = [
-            'arg' => $args,
-            'msg' => $msg,
-            'userRule'=>$rule
+            'arg'      => $args,
+            'msg'      => $msg,
+            'userRule' => $rule
         ];
         return $this;
     }
@@ -261,7 +266,7 @@ class Rule
     function inArray(array $array, $isStrict = false, $msg = null)
     {
         $this->ruleMap['inArray'] = [
-            'arg' => [ $array, $isStrict ],
+            'arg' => [$array, $isStrict],
             'msg' => $msg
         ];
         return $this;
@@ -334,7 +339,7 @@ class Rule
     function notInArray(array $array, $isStrict = false, $msg = null)
     {
         $this->ruleMap['notInArray'] = [
-            'arg' => [ $array, $isStrict ],
+            'arg' => [$array, $isStrict],
             'msg' => $msg
         ];
         return $this;
@@ -436,7 +441,7 @@ class Rule
      * 验证值是合法的金额
      * 100 | 100.1 | 100.01
      * @param integer|null $precision 小数点位数
-     * @param string|null  $msg
+     * @param string|null $msg
      * @return Rule
      */
     function money(?int $precision = null, string $msg = null): Rule

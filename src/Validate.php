@@ -36,10 +36,10 @@ class Validate
      * @param bool $reset
      * @return Rule
      */
-    public function addColumn(string $name, ?string $alias = null,bool $reset = false): Rule
+    public function addColumn(string $name, ?string $alias = null, bool $reset = false): Rule
     {
-        if(!isset($this->columns[$name]) || $reset){
-            $rule = new Rule();
+        if (!isset($this->columns[$name]) || $reset) {
+            $rule                 = new Rule();
             $this->columns[$name] = [
                 'alias' => $alias,
                 'rule'  => $rule
@@ -56,12 +56,12 @@ class Validate
     function validate(array $data)
     {
         $this->verifiedData = [];
-        $spl = new SplArray($data);
+        $spl                = new SplArray($data);
+
         foreach ($this->columns as $column => $item) {
             /** @var Rule $rule */
-            $rule = $item['rule'];
+            $rule  = $item['rule'];
             $rules = $rule->getRuleMap();
-
             /*
              * 优先检测是否带有optional选项
              * 如果设置了optional又不存在对应字段，则跳过该字段检测
@@ -72,24 +72,25 @@ class Validate
                 continue;
             }
             foreach ($rules as $rule => $ruleInfo) {
-                if ($rule === 'func') {
-                    // 如果当前是一个Func 那么可以直接Call这个Func进行判断
-                    $result = call_user_func($ruleInfo['arg'], $spl, $column);
-                    if ($result !== true) {  // 不全等 true 则为验证失败
-                        $resultErr = strval($result);
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $resultErr, $ruleInfo['arg']);
-                        return false;
-                    }
-                } else if(is_string($rule)){
-                    /** @var RuleInterface $userRule */
+                //自定义验证类处理
+                if (!method_exists($this, $rule)) {
+                    /** @var ValidateInterface $userRule */
                     $userRule = $ruleInfo['userRule'];
-                    $msg = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
-                    if($msg !== null)
-                    {
+                    $msg      = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
+                    if ($msg !== null) {
+                        $msg         = $ruleInfo['msg'] ?: $msg;
                         $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
                         return false;
                     }
-                }else if (!call_user_func([ $this, $rule ], $spl, $column, $ruleInfo['arg'])) {
+                } else if ($rule === 'func') {
+                    // 如果当前是一个Func 那么可以直接Call这个Func进行判断
+                    $result = call_user_func($ruleInfo['arg'], $spl, $column);
+                    if ($result !== true) {  // 不全等 true 则为验证失败
+                        $resultErr   = strval($result);
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $resultErr, $ruleInfo['arg']);
+                        return false;
+                    }
+                } else if (!call_user_func([$this, $rule], $spl, $column, $ruleInfo['arg'])) {
                     $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg']);
                     return false;
                 }
@@ -190,8 +191,8 @@ class Validate
     private function between(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        $min = array_shift($args);
-        $max = array_shift($args);
+        $min  = array_shift($args);
+        $max  = array_shift($args);
         if (is_numeric($data) || is_string($data)) {
             if ($data <= $max && $data >= $min) {
                 return true;
@@ -222,8 +223,8 @@ class Validate
 
     /**
      * 给定参数是否合法的小数
-     * @param SplArray     $splArray
-     * @param string       $column
+     * @param SplArray $splArray
+     * @param string $column
      * @param null|integer $arg
      * @return bool
      */
@@ -308,8 +309,8 @@ class Validate
      */
     private function equal(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
-        $value = array_shift($args);
+        $data   = $splArray->get($column);
+        $value  = array_shift($args);
         $strict = array_shift($args);
         if ($strict) {
             if ($data !== $value) {
@@ -332,8 +333,8 @@ class Validate
      */
     private function different(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
-        $value = array_shift($args);
+        $data   = $splArray->get($column);
+        $value  = array_shift($args);
         $strict = array_shift($args);
         if ($strict) {
             if ($data === $value) {
@@ -356,10 +357,10 @@ class Validate
      */
     private function equalWithColumn(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
+        $data      = $splArray->get($column);
         $fieldName = array_shift($args);
-        $strict = array_shift($args);
-        $value = $splArray->get($fieldName);
+        $strict    = array_shift($args);
+        $value     = $splArray->get($fieldName);
         if ($strict) {
             if ($data !== $value) {
                 return false;
@@ -381,10 +382,10 @@ class Validate
      */
     private function differentWithColumn(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
+        $data      = $splArray->get($column);
         $fieldName = array_shift($args);
-        $strict = array_shift($args);
-        $value = $splArray->get($fieldName);
+        $strict    = array_shift($args);
+        $value     = $splArray->get($fieldName);
         if ($strict) {
             if ($data === $value) {
                 return false;
@@ -431,8 +432,8 @@ class Validate
      */
     private function inArray(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
-        $array = array_shift($args);
+        $data     = $splArray->get($column);
+        $array    = array_shift($args);
         $isStrict = array_shift($args);
         return in_array($data, $array, $isStrict);
     }
@@ -501,8 +502,8 @@ class Validate
      */
     private function notInArray(SplArray $splArray, string $column, $args): bool
     {
-        $data = $splArray->get($column);
-        $array = array_shift($args);
+        $data     = $splArray->get($column);
+        $array    = array_shift($args);
         $isStrict = array_shift($args);
         return !in_array($data, $array, $isStrict);
     }
@@ -598,8 +599,8 @@ class Validate
     private function betweenLen(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        $min = array_shift($args);
-        $max = array_shift($args);
+        $min  = array_shift($args);
+        $max  = array_shift($args);
         if (is_numeric($data) || is_string($data)) {
             if (strlen($data) >= $min && strlen($data) <= $max) {
                 return true;
@@ -639,14 +640,14 @@ class Validate
     /**
      * 给定值是否一个合法的金额
      * @param SplArray $splArray
-     * @param string   $column
+     * @param string $column
      * @param          $arg
      * @return false|int
      */
     private function money(SplArray $splArray, string $column, $arg)
     {
         if (is_null($arg)) $arg = '';
-        $data = $splArray->get($column);
+        $data  = $splArray->get($column);
         $regex = '/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . $arg . '})?$/';
         return preg_match($regex, $data);
     }
@@ -791,7 +792,7 @@ class Validate
     /**
      * 时间戳是否在某时间戳之前
      * @param SplArray $splArray
-     * @param string   $column
+     * @param string $column
      * @param          $arg
      * @return bool
      */
@@ -808,7 +809,7 @@ class Validate
     /**
      * 时间戳是否在某时间戳之后
      * @param SplArray $splArray
-     * @param string   $column
+     * @param string $column
      * @param          $arg
      * @return bool
      */

@@ -92,3 +92,63 @@ if ($bool) {
  * 输出结果： string(23) "只允许18岁的进入"
  */
 ```
+
+## 自定义验证器类
+
+自定义验证器类错误例子
+
+```php
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Heelie
+ * Date: 19-12-27
+ * Time: 下午15:52
+ */
+
+require_once "./vendor/autoload.php";
+
+class CustomValidator implements \EasySwoole\Validate\ValidateInterface
+{
+    /**
+     * 返回当前校验规则的名字
+     * @return string
+     */
+    public function name(): string
+    {
+        return 'mobile';
+    }
+
+    /**
+     * 检验失败返回错误信息即可
+     *
+     * @param \EasySwoole\Spl\SplArray $spl
+     * @param string $column
+     * @param mixed ...$args
+     * @return string|null
+     */
+    public function validate(\EasySwoole\Spl\SplArray $spl, $column, ...$args): ?string
+    {
+        $regular = '/^((13[0-9])|(14[5,7,9])|(15[^4])|(18[0-9])|(17[0,1,3,5,6,7,8]))\\d{8}$/';
+        if (!preg_match($regular, $spl->get($column))) {
+            return '手机号验证未通过';
+        }
+        return null;
+    }
+}
+
+// 待验证数据
+$data     = ['mobile' => '12312345678'];
+$validate = new \EasySwoole\Validate\Validate();
+// 自定义错误消息示例
+$validate->addColumn('mobile')->required('手机号不能为空')->callUserRule(new CustomValidator, '手机号格式不正确');
+$bool = $validate->validate($data); // 验证结果
+if ($bool) {
+    var_dump("验证通过");
+} else {
+    var_dump($validate->getError()->__toString());
+}
+/*
+ * 输出结果：string(24) "手机号格式不正确"
+ */
+```

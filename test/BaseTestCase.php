@@ -21,7 +21,7 @@ class BaseTestCase extends \PHPUnit\Framework\TestCase
     protected $validate;
 
     // 建立测试基境 引入必要文件
-    function setUp()
+    function setUp(): void
     {
         require_once dirname(__FILE__) . '/../src/Rule.php';
         require_once dirname(__FILE__) . '/../src/Error.php';
