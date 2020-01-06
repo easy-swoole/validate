@@ -41,7 +41,7 @@ class CustomValidator implements ValidateInterface
     }
 }
 
-class CustomValidatorTest extends BaseTestCase
+class CallUserRuleTest extends BaseTestCase
 {
     // 合法断言
     function testValidCase()
