@@ -24,23 +24,6 @@ class Rule
     }
 
     /**
-     * 自定义验证器调用
-     * @param ValidateInterface $rule
-     * @param null $msg
-     * @param mixed ...$args
-     * @return $this
-     */
-    public function callUserRule(ValidateInterface $rule, $msg = null, ...$args)
-    {
-        $this->ruleMap[$rule->name()] = [
-            'arg'      => $args,
-            'msg'      => $msg,
-            'userRule' => $rule
-        ];
-        return $this;
-    }
-
-    /**
      * 给定的URL是否可以成功通讯
      * @param null|string $msg
      * @return $this
@@ -114,6 +97,23 @@ class Rule
         $this->ruleMap['bool'] = [
             'msg' => $msg,
             'arg' => null
+        ];
+        return $this;
+    }
+
+    /**
+     * 自定义验证器调用
+     * @param ValidateInterface $rule
+     * @param null $msg
+     * @param mixed ...$args
+     * @return $this
+     */
+    public function callUserRule(ValidateInterface $rule, $msg = null, ...$args)
+    {
+        $this->ruleMap[$rule->name()] = [
+            'arg'      => $args,
+            'msg'      => $msg,
+            'userRule' => $rule
         ];
         return $this;
     }

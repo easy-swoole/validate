@@ -546,11 +546,17 @@ class Validate
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
-            if (strlen($data) <= $arg) {
-                return true;
+            $result = false;
+            if (function_exists('mb_strlen')) {
+                if (mb_strlen($data, mb_internal_encoding()) <= $arg) {
+                    $result = true;
+                }
             } else {
-                return false;
+                if (strlen($data) <= $arg) {
+                    $result = true;
+                }
             }
+            return $result;
         } else if (is_array($data)) {
             if (count($data) <= $arg) {
                 return true;
@@ -573,11 +579,17 @@ class Validate
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
-            if (strlen($data) >= $arg) {
-                return true;
+            $result = false;
+            if (function_exists('mb_strlen')) {
+                if (mb_strlen($data, mb_internal_encoding()) >= $arg) {
+                    $result = true;
+                }
             } else {
-                return false;
+                if (strlen($data) >= $arg) {
+                    $result = true;
+                }
             }
+            return $result;
         } else if (is_array($data)) {
             if (count($data) >= $arg) {
                 return true;
