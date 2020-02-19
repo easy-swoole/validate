@@ -564,7 +564,7 @@ class Validate
                 return false;
             }
         } else {
-            return false;
+            return true;
         }
     }
 
