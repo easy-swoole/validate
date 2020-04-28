@@ -49,6 +49,17 @@ class Validate
     }
 
     /**
+     * 删除一个待验证字段
+     * @param string $name
+     */
+    public function delColumn(string $name)
+    {
+        if (isset($this->columns[$name])){
+            unset($this->columns[$name]);
+        }
+    }
+    
+    /**
      * 验证字段是否合法
      * @param array $data
      * @return bool
