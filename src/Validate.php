@@ -58,7 +58,16 @@ class Validate
             unset($this->columns[$name]);
         }
     }
-    
+
+    /**
+     * 获取所有要验证的字段
+     * @return array
+     */
+    public function getColumns(): array
+    {
+        return array_keys($this->columns);
+    }
+
     /**
      * 验证字段是否合法
      * @param array $data
