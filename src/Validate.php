@@ -86,8 +86,7 @@ class Validate
                     // 如果当前是一个Func 那么可以直接Call这个Func进行判断
                     $result = call_user_func($ruleInfo['arg'], $spl, $column);
                     if ($result !== true) {  // 不全等 true 则为验证失败
-                        $resultErr   = strval($result);
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $resultErr, $ruleInfo['arg']);
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg']);
                         return false;
                     }
                 } else if (!call_user_func([$this, $rule], $spl, $column, $ruleInfo['arg'])) {
