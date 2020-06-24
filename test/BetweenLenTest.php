@@ -8,6 +8,8 @@
 
 namespace EasySwoole\Validate\test;
 
+use EasySwoole\Http\Message\UploadFile;
+
 require_once "BaseTestCase.php";
 
 class BetweenLenTest extends BaseTestCase
@@ -20,6 +22,14 @@ class BetweenLenTest extends BaseTestCase
         $this->freeValidate();
         $this->validate->addColumn('name')->betweenLen(2, 6);
         $bool = $this->validate->validate(['name' => 'blank']);
+        $this->assertTrue($bool);
+
+        /*
+         * file
+         */
+        $this->freeValidate();
+        $this->validate->addColumn('file')->betweenLen(1,2);
+        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png',1,200))]);
         $this->assertTrue($bool);
 
     }

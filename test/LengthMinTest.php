@@ -8,6 +8,8 @@
 
 namespace EasySwoole\Validate\test;
 
+use EasySwoole\Http\Message\UploadFile;
+
 require_once "BaseTestCase.php";
 
 /**
@@ -46,6 +48,13 @@ class LengthMinTest extends BaseTestCase
         $bool = $this->validate->validate(['fruit' => ['apple', 'grape', 'orange']]);
         $this->assertTrue($bool);
 
+        /*
+         * file
+         */
+        $this->freeValidate();
+        $this->validate->addColumn('file')->lengthMin(1);
+        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png',2,200))]);
+        $this->assertTrue($bool);
     }
 
     /*

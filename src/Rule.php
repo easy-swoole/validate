@@ -596,4 +596,19 @@ class Rule
         ];
         return $this;
     }
+
+    /**
+     * 判断文件类型
+     * @param string $type
+     * @param null $msg
+     * @return $this
+     * @author gaobinzhan <gaobinzhan@gmail.com>
+     */
+    function allowFile(string $type,$msg = null){
+        $this->ruleMap['allowFile'] = [
+            'arg' => $type,
+            'msg' => $msg
+        ];
+        return $this;
+    }
 }

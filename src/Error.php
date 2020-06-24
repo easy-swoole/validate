@@ -61,6 +61,7 @@ class Error
         'timestampBefore'     => ':fieldName必须在:arg0之前',
         'timestampAfter'      => ':fieldName必须在:arg0之后',
         'url'                 => ':fieldName必须是合法的网址',
+        'allowFile'           => ':fieldName类型必须为:arg0'
     ];
 
     /**

@@ -10,6 +10,7 @@ namespace EasySwoole\Validate;
 
 
 use EasySwoole\Spl\SplArray;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * 数据验证器
@@ -39,10 +40,10 @@ class Validate
     public function addColumn(string $name, ?string $alias = null, bool $reset = false): Rule
     {
         if (!isset($this->columns[$name]) || $reset) {
-            $rule                 = new Rule();
+            $rule = new Rule();
             $this->columns[$name] = [
                 'alias' => $alias,
-                'rule'  => $rule
+                'rule' => $rule
             ];
         }
         return $this->columns[$name]['rule'];
@@ -54,7 +55,7 @@ class Validate
      */
     public function delColumn(string $name)
     {
-        if (isset($this->columns[$name])){
+        if (isset($this->columns[$name])) {
             unset($this->columns[$name]);
         }
     }
@@ -76,11 +77,11 @@ class Validate
     function validate(array $data)
     {
         $this->verifiedData = [];
-        $spl                = new SplArray($data);
+        $spl = new SplArray($data);
 
         foreach ($this->columns as $column => $item) {
             /** @var Rule $rule */
-            $rule  = $item['rule'];
+            $rule = $item['rule'];
             $rules = $rule->getRuleMap();
             /*
              * 优先检测是否带有optional选项
@@ -96,9 +97,9 @@ class Validate
                 if (!method_exists($this, $rule)) {
                     /** @var ValidateInterface $userRule */
                     $userRule = $ruleInfo['userRule'];
-                    $msg      = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
+                    $msg = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
                     if ($msg !== null) {
-                        $msg         = $ruleInfo['msg'] ?: $msg;
+                        $msg = $ruleInfo['msg'] ?: $msg;
                         $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
                         return false;
                     }
@@ -210,8 +211,8 @@ class Validate
     private function between(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        $min  = array_shift($args);
-        $max  = array_shift($args);
+        $min = array_shift($args);
+        $max = array_shift($args);
         if (is_numeric($data) || is_string($data)) {
             if ($data <= $max && $data >= $min) {
                 return true;
@@ -328,8 +329,8 @@ class Validate
      */
     private function equal(SplArray $splArray, string $column, $args): bool
     {
-        $data   = $splArray->get($column);
-        $value  = array_shift($args);
+        $data = $splArray->get($column);
+        $value = array_shift($args);
         $strict = array_shift($args);
         if ($strict) {
             if ($data !== $value) {
@@ -352,8 +353,8 @@ class Validate
      */
     private function different(SplArray $splArray, string $column, $args): bool
     {
-        $data   = $splArray->get($column);
-        $value  = array_shift($args);
+        $data = $splArray->get($column);
+        $value = array_shift($args);
         $strict = array_shift($args);
         if ($strict) {
             if ($data === $value) {
@@ -376,10 +377,10 @@ class Validate
      */
     private function equalWithColumn(SplArray $splArray, string $column, $args): bool
     {
-        $data      = $splArray->get($column);
+        $data = $splArray->get($column);
         $fieldName = array_shift($args);
-        $strict    = array_shift($args);
-        $value     = $splArray->get($fieldName);
+        $strict = array_shift($args);
+        $value = $splArray->get($fieldName);
         if ($strict) {
             if ($data !== $value) {
                 return false;
@@ -401,10 +402,10 @@ class Validate
      */
     private function differentWithColumn(SplArray $splArray, string $column, $args): bool
     {
-        $data      = $splArray->get($column);
+        $data = $splArray->get($column);
         $fieldName = array_shift($args);
-        $strict    = array_shift($args);
-        $value     = $splArray->get($fieldName);
+        $strict = array_shift($args);
+        $value = $splArray->get($fieldName);
         if ($strict) {
             if ($data === $value) {
                 return false;
@@ -451,8 +452,8 @@ class Validate
      */
     private function inArray(SplArray $splArray, string $column, $args): bool
     {
-        $data     = $splArray->get($column);
-        $array    = array_shift($args);
+        $data = $splArray->get($column);
+        $array = array_shift($args);
         $isStrict = array_shift($args);
         return in_array($data, $array, $isStrict);
     }
@@ -521,14 +522,14 @@ class Validate
      */
     private function notInArray(SplArray $splArray, string $column, $args): bool
     {
-        $data     = $splArray->get($column);
-        $array    = array_shift($args);
+        $data = $splArray->get($column);
+        $array = array_shift($args);
         $isStrict = array_shift($args);
         return !in_array($data, $array, $isStrict);
     }
 
     /**
-     * 验证数组或字符串的长度
+     * 验证数组或字符串或者文件的大小
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -538,24 +539,26 @@ class Validate
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
-            if (strlen($data) == $arg) {
-                return true;
+            $result = false;
+            if (function_exists('mb_strlen') && (mb_strlen($data, mb_internal_encoding()) == $arg)) {
+                $result = true;
             } else {
-                return false;
+                if (strlen($data) == $arg) {
+                    $result = true;
+                }
             }
-        } else if (is_array($data)) {
-            if (count($data) == $arg) {
-                return true;
-            } else {
-                return false;
-            }
+            return $result;
+        } else if (is_array($data) && (count($data) == $arg)) {
+            return true;
+        } else if (($data instanceof UploadedFileInterface) && ($data->getSize() == $arg)) {
+            return true;
         } else {
             return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否超出
+     * 验证数组或字符串的长度或文件的大小是否超出
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -566,29 +569,25 @@ class Validate
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
             $result = false;
-            if (function_exists('mb_strlen')) {
-                if (mb_strlen($data, mb_internal_encoding()) <= $arg) {
-                    $result = true;
-                }
+            if (function_exists('mb_strlen') && (mb_strlen($data, mb_internal_encoding()) <= $arg)) {
+                $result = true;
             } else {
                 if (strlen($data) <= $arg) {
                     $result = true;
                 }
             }
             return $result;
-        } else if (is_array($data)) {
-            if (count($data) <= $arg) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+        } else if (is_array($data) && (count($data) <= $arg)) {
             return true;
+        } else if (($data instanceof UploadedFileInterface) && ($data->getSize() <= $arg)) {
+            return true;
+        } else {
+            return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否达到
+     * 验证数组或字符串的长度或文件的大小是否达到
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -599,29 +598,25 @@ class Validate
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
             $result = false;
-            if (function_exists('mb_strlen')) {
-                if (mb_strlen($data, mb_internal_encoding()) >= $arg) {
-                    $result = true;
-                }
+            if (function_exists('mb_strlen') && (mb_strlen($data, mb_internal_encoding()) >= $arg)) {
+                $result = true;
             } else {
                 if (strlen($data) >= $arg) {
                     $result = true;
                 }
             }
             return $result;
-        } else if (is_array($data)) {
-            if (count($data) >= $arg) {
-                return true;
-            } else {
-                return false;
-            }
+        } else if (is_array($data) && (count($data) >= $arg)) {
+            return true;
+        } else if (($data instanceof UploadedFileInterface) && ($data->getSize() >= $arg)) {
+            return true;
         } else {
             return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否在一个区间里面
+     * 验证数组或字符串的长度或文件的大小是否在一个区间里面
      * @param SplArray $splArray
      * @param string $column
      * @param $args
@@ -630,8 +625,8 @@ class Validate
     private function betweenLen(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
-        $min  = array_shift($args);
-        $max  = array_shift($args);
+        $min = array_shift($args);
+        $max = array_shift($args);
         if (is_numeric($data) || is_string($data)) {
             if (strlen($data) >= $min && strlen($data) <= $max) {
                 return true;
@@ -644,6 +639,12 @@ class Validate
             } else {
                 return false;
             }
+        } else if ($data instanceof UploadedFileInterface) {
+            $size = $data->getSize();
+            if ($size >= $min && $size <= $max) {
+                return true;
+            }
+            return false;
         } else {
             return false;
         }
@@ -678,7 +679,7 @@ class Validate
     private function money(SplArray $splArray, string $column, $arg)
     {
         if (is_null($arg)) $arg = '';
-        $data  = $splArray->get($column);
+        $data = $splArray->get($column);
         $regex = '/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . $arg . '})?$/';
         return preg_match($regex, $data);
     }
@@ -865,6 +866,28 @@ class Validate
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * 判断文件类型
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     * @author gaobinzhan <gaobinzhan@gmail.com>
+     */
+    private function allowFile(SplArray $splArray, string $column, $arg): bool
+    {
+        $data = $splArray->get($column);
+        if (!$data instanceof UploadedFileInterface) {
+            return false;
+        }
+
+        if ($data->getClientMediaType() != $arg) {
+            return false;
+        }
+
+        return true;
     }
 
 }
