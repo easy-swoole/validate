@@ -8,6 +8,8 @@
 
 namespace EasySwoole\Validate\test;
 
+use EasySwoole\Http\Message\UploadFile;
+
 require_once "BaseTestCase.php";
 
 /**
@@ -44,6 +46,14 @@ class LengthMaxTest extends BaseTestCase
         $this->freeValidate();
         $this->validate->addColumn('fruit')->lengthMax(6);
         $bool = $this->validate->validate(['fruit' => ['apple', 'grape', 'orange']]);
+        $this->assertTrue($bool);
+
+       /*
+        * file
+        */
+        $this->freeValidate();
+        $this->validate->addColumn('file')->lengthMax(6);
+        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png',5,200))]);
         $this->assertTrue($bool);
 
     }
