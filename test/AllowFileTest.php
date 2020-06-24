@@ -24,5 +24,6 @@ class AllowFileTest extends BaseTestCase
         $this->validate->addColumn('file')->allowFile('image/png');
         $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 1, 200, null, 'image/jpg'))]);
         $this->assertFalse($bool);
+        $this->assertEquals("file类型必须为'image/png'", $this->validate->getError()->__toString());
     }
 }
