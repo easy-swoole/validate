@@ -10,6 +10,7 @@ namespace EasySwoole\Validate;
 
 
 use EasySwoole\Spl\SplArray;
+use Psr\Http\Message\UploadedFileInterface;
 
 /**
  * 数据验证器
@@ -528,7 +529,7 @@ class Validate
     }
 
     /**
-     * 验证数组或字符串的长度
+     * 验证数组或字符串或者文件的大小
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -538,24 +539,36 @@ class Validate
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
-            if (strlen($data) == $arg) {
-                return true;
+            $result = false;
+            if (function_exists('mb_strlen')) {
+                if (mb_strlen($data, mb_internal_encoding()) == $arg) {
+                    $result = true;
+                }
             } else {
-                return false;
+                if (strlen($data) == $arg) {
+                    $result = true;
+                }
             }
+            return $result;
         } else if (is_array($data)) {
             if (count($data) == $arg) {
                 return true;
             } else {
                 return false;
             }
+        } else if($data instanceof UploadedFileInterface){
+            $size = $data->getSize();
+            if ($size == $arg) {
+                return true;
+            }
+            return false;
         } else {
             return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否超出
+     * 验证数组或字符串的长度或文件的大小是否超出
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -582,13 +595,19 @@ class Validate
             } else {
                 return false;
             }
+        } else if($data instanceof UploadedFileInterface){
+            $size = $data->getSize();
+            if ($size <= $arg) {
+                return true;
+            }
+            return false;
         } else {
-            return true;
+            return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否达到
+     * 验证数组或字符串的长度或文件的大小是否达到
      * @param SplArray $splArray
      * @param string $column
      * @param $arg
@@ -615,13 +634,19 @@ class Validate
             } else {
                 return false;
             }
+        } else if($data instanceof UploadedFileInterface){
+            $size = $data->getSize();
+            if ($size >= $arg) {
+                return true;
+            }
+            return false;
         } else {
             return false;
         }
     }
 
     /**
-     * 验证数组或字符串的长度是否在一个区间里面
+     * 验证数组或字符串的长度或文件的大小是否在一个区间里面
      * @param SplArray $splArray
      * @param string $column
      * @param $args
@@ -644,7 +669,13 @@ class Validate
             } else {
                 return false;
             }
-        } else {
+        } else if($data instanceof UploadedFileInterface){
+            $size = $data->getSize();
+            if ($size >= $min && $size <= $max) {
+                return true;
+            }
+            return false;
+        }  else {
             return false;
         }
     }
@@ -865,6 +896,28 @@ class Validate
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_URL);
+    }
+
+    /**
+     * 判断文件类型
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $arg
+     * @return bool
+     * @author gaobinzhan <gaobinzhan@gmail.com>
+     */
+    private function allowFile(SplArray $splArray,string $column,$arg): bool
+    {
+        $data = $splArray->get($column);
+        if (!$data instanceof UploadedFileInterface){
+            return false;
+        }
+
+        if ($data->getClientMediaType() != $arg) {
+            return false;
+        }
+
+        return true;
     }
 
 }
