@@ -30,7 +30,7 @@ private $defaultErrorMsg = [
     'required'   => ':fieldName必须填写',
     'timestamp'  => ':fieldName必须是一个有效的时间戳',
     'url'        => ':fieldName必须是合法的网址',
-    'allowFile'  => ':fieldName类型必须为:arg0'
+    'allowFile'  => ':fieldName文件类型必须在:arg0内'
 ];
 ```
 

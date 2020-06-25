@@ -598,15 +598,16 @@ class Rule
     }
 
     /**
-     * 判断文件类型
-     * @param string $type
+     * @param array $type
+     * @param bool $isStrict
      * @param null $msg
      * @return $this
      * @author gaobinzhan <gaobinzhan@gmail.com>
      */
-    function allowFile(string $type,$msg = null){
+    function allowFile(array $type, $isStrict = false, $msg = null)
+    {
         $this->ruleMap['allowFile'] = [
-            'arg' => $type,
+            'arg' => [$type,$isStrict],
             'msg' => $msg
         ];
         return $this;
