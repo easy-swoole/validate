@@ -868,15 +868,47 @@ class Validate
         return filter_var($data, FILTER_VALIDATE_URL);
     }
 
+
+    /**
+     * 判断文件扩展名
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $args
+     * @return bool
+     */
+    private function allowFile(SplArray $splArray, string $column, $args): bool
+    {
+        $data = $splArray->get($column);
+        if (!$data instanceof UploadedFileInterface) {
+            return false;
+        }
+
+        $array = array_shift($args);
+        $isStrict = array_shift($args);
+
+        $filename = $data->getClientFilename();
+        if (!$filename) {
+            return false;
+        }
+
+        $extension = pathinfo($filename)['extension'] ?? '';
+
+        if (!in_array($extension, $array, $isStrict)) {
+            return false;
+        }
+
+        return true;
+    }
+
+
     /**
      * 判断文件类型
      * @param SplArray $splArray
      * @param string $column
      * @param $args
      * @return bool
-     * @author gaobinzhan <gaobinzhan@gmail.com>
      */
-    private function allowFile(SplArray $splArray, string $column, $args): bool
+    private function allowFileType(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
         if (!$data instanceof UploadedFileInterface) {

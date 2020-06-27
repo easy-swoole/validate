@@ -597,16 +597,31 @@ class Rule
         return $this;
     }
 
+
+
     /**
      * @param array $type
      * @param bool $isStrict
      * @param null $msg
      * @return $this
-     * @author gaobinzhan <gaobinzhan@gmail.com>
      */
-    function allowFile(array $type, $isStrict = false, $msg = null)
-    {
+    function allowFile(array $type, $isStrict = false, $msg = null){
         $this->ruleMap['allowFile'] = [
+            'arg' => [$type,$isStrict],
+            'msg' => $msg
+        ];
+        return $this;
+    }
+
+    /**
+     * @param array $type
+     * @param bool $isStrict
+     * @param null $msg
+     * @return $this
+     */
+    function allowFileType(array $type, $isStrict = false, $msg = null)
+    {
+        $this->ruleMap['allowFileType'] = [
             'arg' => [$type,$isStrict],
             'msg' => $msg
         ];

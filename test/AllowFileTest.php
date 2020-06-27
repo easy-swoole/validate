@@ -6,24 +6,24 @@
 
 namespace EasySwoole\Validate\test;
 
+
 use EasySwoole\Http\Message\UploadFile;
 
 require_once 'BaseTestCase.php';
 
 class AllowFileTest extends BaseTestCase
 {
-    function testValidCase()
+    public function testValidateClass()
     {
         $this->freeValidate();
-        $this->validate->addColumn('file')->allowFile(['image/png']);
-        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 1, 200, null, 'image/png'))]);
+        $this->validate->addColumn('file')->allowFile(['png']);
+        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 1, 200, 'easyswoole.png'))]);
         $this->assertTrue($bool);
 
-
         $this->freeValidate();
-        $this->validate->addColumn('file')->allowFile(['image/png', 'image/jpg']);
-        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 1, 200, null, 'image/jpeg'))]);
+        $this->validate->addColumn('file')->allowFile(['jpg','mp4']);
+        $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 1, 200, 'easyswoole.png'))]);
         $this->assertFalse($bool);
-        $this->assertEquals("file文件类型必须在[image/png,image/jpg]内", $this->validate->getError()->__toString());
+        $this->assertEquals("file文件扩展名必须在[jpg,mp4]内", $this->validate->getError()->__toString());
     }
 }
