@@ -61,7 +61,8 @@ class Error
         'timestampBefore'     => ':fieldName必须在:arg0之前',
         'timestampAfter'      => ':fieldName必须在:arg0之后',
         'url'                 => ':fieldName必须是合法的网址',
-        'allowFile'           => ':fieldName文件类型必须在:arg0内'
+        'allowFile'           => ':fieldName文件扩展名必须在:arg0内',
+        'allowFileType'       => ':fieldName文件类型必须在:arg0内'
     ];
 
     /**
@@ -208,7 +209,7 @@ class Error
         $defaultErrorTpl = $this->defaultErrorMsg[$this->errorRule];
         $errorMsg = str_replace(':fieldName', $fieldName, $defaultErrorTpl);
         if (is_array($this->errorRuleArg)) {
-            $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile'];
+            $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
             if (in_array($this->errorRule, $arrayCheckFunc)) {
                 $arrayValue = array_shift($this->errorRuleArg);
                 $errorMsg = str_replace(":arg0", '[' . implode(',', $arrayValue) . ']', $errorMsg);
