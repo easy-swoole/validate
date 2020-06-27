@@ -872,18 +872,21 @@ class Validate
      * 判断文件类型
      * @param SplArray $splArray
      * @param string $column
-     * @param $arg
+     * @param $args
      * @return bool
      * @author gaobinzhan <gaobinzhan@gmail.com>
      */
-    private function allowFile(SplArray $splArray, string $column, $arg): bool
+    private function allowFile(SplArray $splArray, string $column, $args): bool
     {
         $data = $splArray->get($column);
         if (!$data instanceof UploadedFileInterface) {
             return false;
         }
 
-        if ($data->getClientMediaType() != $arg) {
+        $array = array_shift($args);
+        $isStrict = array_shift($args);
+
+        if (!in_array($data->getClientMediaType(), $array, $isStrict)) {
             return false;
         }
 
