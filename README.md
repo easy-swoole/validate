@@ -31,7 +31,8 @@ private $defaultErrorMsg = [
     'timestamp'     => ':fieldName必须是一个有效的时间戳',
     'url'           => ':fieldName必须是合法的网址',
     'allowFile'     => ':fieldName文件扩展名必须在:arg0内',
-    'allowFileType' => ':fieldName文件类型必须在:arg0内'
+    'allowFileType' => ':fieldName文件类型必须在:arg0内',
+    'isArray'       => ':fieldName类型必须为数组'
 ];
 ```
 
