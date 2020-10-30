@@ -925,4 +925,17 @@ class Validate
         return true;
     }
 
+    /**
+     * 是否为数组
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $args
+     * @return bool
+     */
+    private function isArray(SplArray $splArray, string $column, $args): bool
+    {
+        $data = $splArray->get($column);
+        return is_array($data);
+    }
+
 }

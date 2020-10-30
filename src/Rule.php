@@ -627,4 +627,17 @@ class Rule
         ];
         return $this;
     }
+
+    /**
+     * @param null $msg
+     * @return $this
+     */
+    function isArray($msg = null)
+    {
+        $this->ruleMap['isArray'] = [
+            'arg' => null,
+            'msg' => $msg
+        ];
+        return $this;
+    }
 }
