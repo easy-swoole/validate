@@ -10,7 +10,7 @@ namespace EasySwoole\Validate\test;
 
 require_once 'BaseTestCase.php';
 
-class DifferentTest extends BaseTestCase
+class DifferentWithColumnTest extends BaseTestCase
 {
     // 合法断言
     function testValidCase()

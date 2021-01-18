@@ -228,6 +228,32 @@ class Rule
     }
 
     /**
+     * bar字段必须小于foo字段
+     * @param $fieldName
+     * @param null $msg
+     */
+    function lessThanWithColumn($fieldName, $msg = null)
+    {
+        $this->ruleMap['lessThanWithColumn'] = [
+            'msg' => $msg,
+            'arg' => $fieldName
+        ];
+    }
+
+    /**
+     * bar字段必须大于foo字段
+     * @param $fieldName
+     * @param null $msg
+     */
+    function greaterThanWithColumn($fieldName, $msg = null)
+    {
+        $this->ruleMap['greaterThanWithColumn'] = [
+            'msg' => $msg,
+            'arg' => $fieldName
+        ];
+    }
+
+    /**
      * 验证值是否一个浮点数
      * @param null|string $msg
      * @return $this
@@ -409,11 +435,11 @@ class Rule
 
     /**
      * 验证值不大于(相等视为不通过)
-     * @param int $max
+     * @param mixed $max
      * @param null|string $msg
      * @return Rule
      */
-    function max(int $max, ?string $msg = null): Rule
+    function max($max, ?string $msg = null): Rule
     {
         $this->ruleMap['max'] = [
             'arg' => $max,
@@ -424,11 +450,11 @@ class Rule
 
     /**
      * 验证值不小于(相等视为不通过)
-     * @param int $min
+     * @param mixed $min
      * @param null|string $msg
      * @return Rule
      */
-    function min(int $min, ?string $msg = null): Rule
+    function min($min, ?string $msg = null): Rule
     {
         $this->ruleMap['min'] = [
             'arg' => $min,
