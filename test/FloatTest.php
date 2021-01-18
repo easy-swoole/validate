@@ -48,10 +48,9 @@ class FloatTest extends BaseTestCase
     // 自定义错误信息断言
     function testCustomErrorMsgCase()
     {
-        // 0 不属于浮点数
         $this->freeValidate();
         $this->validate->addColumn('float')->float('请输入一个浮点数');
-        $validateResult = $this->validate->validate([ 'float' => 0 ]);
+        $validateResult = $this->validate->validate([ 'float' => 'a' ]);
         $this->assertFalse($validateResult);
         $this->assertEquals('请输入一个浮点数', $this->validate->getError()->__toString());
     }

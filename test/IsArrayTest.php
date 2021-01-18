@@ -1,12 +1,6 @@
 <?php
-/**
- * @author gaobinzhan <gaobinzhan@gmail.com>
- */
-
 
 namespace EasySwoole\Validate\test;
-
-require_once './BaseTestCase.php';
 
 class IsArrayTest extends BaseTestCase
 {

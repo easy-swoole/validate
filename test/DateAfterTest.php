@@ -35,14 +35,14 @@ class DateAfterTest extends BaseTestCase
         $this->validate->addColumn('data')->dateAfter('2018-08-08');
         $validateResult = $this->validate->validate([ 'data' => '2018-08-06' ]);
         $this->assertFalse($validateResult);
-        $this->assertEquals('data必须在日期 2018-08-08 之后', $this->validate->getError()->__toString());
+        $this->assertEquals("data必须在日期 '2018-08-08' 之后", $this->validate->getError()->__toString());
 
         // 非法参数
         $this->freeValidate();
         $this->validate->addColumn('data')->dateAfter('aaa');
         $validateResult = $this->validate->validate([ 'data' => '2018-08-06' ]);
         $this->assertFalse($validateResult);
-        $this->assertEquals('data必须在日期 aaa 之后', $this->validate->getError()->__toString());
+        $this->assertEquals("data必须在日期 'aaa' 之后", $this->validate->getError()->__toString());
     }
 
     // 自定义错误信息断言

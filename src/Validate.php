@@ -419,6 +419,54 @@ class Validate
     }
 
     /**
+     * bar字段必须小于foo字段
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $args
+     * @return bool
+     */
+    private function lessThanWithColumn(SplArray $splArray, string $column, $args): bool
+    {
+        if (!$this->numeric($splArray, $column, null)) {
+            return false;
+        }
+
+        if (!$this->numeric($splArray, $args, null)) {
+            return false;
+        }
+
+        if ($splArray->get($column) < $splArray->get($args)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * bar字段必须大于foo字段
+     * @param SplArray $splArray
+     * @param string $column
+     * @param $args
+     * @return bool
+     */
+    private function greaterThanWithColumn(SplArray $splArray, string $column, $args): bool
+    {
+        if (!$this->numeric($splArray, $column, null)) {
+            return false;
+        }
+
+        if (!$this->numeric($splArray, $args, null)) {
+            return false;
+        }
+
+        if ($splArray->get($column) > $splArray->get($args)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * 验证值是否一个浮点数
      * @param SplArray $splArray
      * @param string $column
