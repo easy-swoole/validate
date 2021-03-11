@@ -23,61 +23,67 @@ class Error
     private $errorRuleMsg;
     private $errorRuleArg;
 
+    /**
+     * @var Validate|null
+     */
+    private $validate;
+
     private $defaultErrorMsg = [
-        'activeUrl'             => ':fieldName必须是可访问的网址',
-        'alpha'                 => ':fieldName只能是字母',
-        'alphaNum'              => ':fieldName只能是字母和数字',
-        'alphaDash'             => ':fieldName只能是字母数字下划线和破折号',
-        'between'               => ':fieldName只能在 :arg0 - :arg1 之间',
-        'bool'                  => ':fieldName只能是布尔值',
-        'decimal'               => ':fieldName只能是小数',
-        'dateBefore'            => ':fieldName必须在日期 :arg0 之前',
-        'dateAfter'             => ':fieldName必须在日期 :arg0 之后',
-        'equal'                 => ':fieldName必须等于:arg0',
-        'different'             => ':fieldName必须不等于:arg0',
-        'equalWithColumn'       => ':fieldName必须等于:arg0的值',
-        'differentWithColumn'   => ':fieldName必须不等于:arg0的值',
-        'float'                 => ':fieldName只能是浮点数',
-        'func'                  => ':fieldName自定义验证失败',
-        'inArray'               => ':fieldName必须在 :arg0 范围内',
-        'integer'               => ':fieldName只能是整数',
-        'isIp'                  => ':fieldName不是有效的IP地址',
-        'notEmpty'              => ':fieldName不能为空',
-        'numeric'               => ':fieldName只能是数字类型',
-        'notInArray'            => ':fieldName不能在 :arg0 范围内',
-        'length'                => ':fieldName的长度必须是:arg0',
-        'lengthMax'             => ':fieldName长度不能超过:arg0',
-        'lengthMin'             => ':fieldName长度不能小于:arg0',
-        'betweenLen'            => ':fieldName的长度只能在 :arg0 - :arg1 之间',
-        'money'                 => ':fieldName必须是合法的金额',
-        'max'                   => ':fieldName的值不能大于:arg0',
-        'min'                   => ':fieldName的值不能小于:arg0',
-        'regex'                 => ':fieldName不符合指定规则',
-        'allDigital'            => ':fieldName只能由数字构成',
-        'required'              => ':fieldName必须填写',
-        'timestamp'             => ':fieldName必须是一个有效的时间戳',
-        'timestampBeforeDate'   => ':fieldName必须在:arg0之前',
-        'timestampAfterDate'    => ':fieldName必须在:arg0之后',
-        'timestampBefore'       => ':fieldName必须在:arg0之前',
-        'timestampAfter'        => ':fieldName必须在:arg0之后',
-        'url'                   => ':fieldName必须是合法的网址',
-        'allowFile'             => ':fieldName文件扩展名必须在:arg0内',
-        'allowFileType'         => ':fieldName文件类型必须在:arg0内',
-        'isArray'               => ':fieldName类型必须为数组',
-        'lessThanWithColumn'    => ':fieldName必须小于:arg0的值',
+        'activeUrl' => ':fieldName必须是可访问的网址',
+        'alpha' => ':fieldName只能是字母',
+        'alphaNum' => ':fieldName只能是字母和数字',
+        'alphaDash' => ':fieldName只能是字母数字下划线和破折号',
+        'between' => ':fieldName只能在 :arg0 - :arg1 之间',
+        'bool' => ':fieldName只能是布尔值',
+        'decimal' => ':fieldName只能是小数',
+        'dateBefore' => ':fieldName必须在日期 :arg0 之前',
+        'dateAfter' => ':fieldName必须在日期 :arg0 之后',
+        'equal' => ':fieldName必须等于:arg0',
+        'different' => ':fieldName必须不等于:arg0',
+        'equalWithColumn' => ':fieldName必须等于:arg0的值',
+        'differentWithColumn' => ':fieldName必须不等于:arg0的值',
+        'float' => ':fieldName只能是浮点数',
+        'func' => ':fieldName自定义验证失败',
+        'inArray' => ':fieldName必须在 :arg0 范围内',
+        'integer' => ':fieldName只能是整数',
+        'isIp' => ':fieldName不是有效的IP地址',
+        'notEmpty' => ':fieldName不能为空',
+        'numeric' => ':fieldName只能是数字类型',
+        'notInArray' => ':fieldName不能在 :arg0 范围内',
+        'length' => ':fieldName的长度必须是:arg0',
+        'lengthMax' => ':fieldName长度不能超过:arg0',
+        'lengthMin' => ':fieldName长度不能小于:arg0',
+        'betweenLen' => ':fieldName的长度只能在 :arg0 - :arg1 之间',
+        'money' => ':fieldName必须是合法的金额',
+        'max' => ':fieldName的值不能大于:arg0',
+        'min' => ':fieldName的值不能小于:arg0',
+        'regex' => ':fieldName不符合指定规则',
+        'allDigital' => ':fieldName只能由数字构成',
+        'required' => ':fieldName必须填写',
+        'timestamp' => ':fieldName必须是一个有效的时间戳',
+        'timestampBeforeDate' => ':fieldName必须在:arg0之前',
+        'timestampAfterDate' => ':fieldName必须在:arg0之后',
+        'timestampBefore' => ':fieldName必须在:arg0之前',
+        'timestampAfter' => ':fieldName必须在:arg0之后',
+        'url' => ':fieldName必须是合法的网址',
+        'allowFile' => ':fieldName文件扩展名必须在:arg0内',
+        'allowFileType' => ':fieldName文件类型必须在:arg0内',
+        'isArray' => ':fieldName类型必须为数组',
+        'lessThanWithColumn' => ':fieldName必须小于:arg0的值',
         'greaterThanWithColumn' => ':fieldName必须大于:arg0的值'
     ];
 
     /**
      * Error constructor.
      * @param string $field 字段名称
-     * @param mixed  $fieldData 字段数据
+     * @param mixed $fieldData 字段数据
      * @param string $fieldAlias 字段别名
      * @param string $errorRule 触发规则名
      * @param string $errorRuleMsg 触发规则消息
-     * @param mixed  $errorRuleArg 触发规则参数
+     * @param mixed $errorRuleArg 触发规则参数
+     * @param Validate|null $validate
      */
-    function __construct($field, $fieldData, $fieldAlias, $errorRule, $errorRuleMsg, $errorRuleArg)
+    function __construct($field, $fieldData, $fieldAlias, $errorRule, $errorRuleMsg, $errorRuleArg, ?Validate $validate = null)
     {
         $this->field = $field;
         $this->fieldData = $fieldData;
@@ -85,6 +91,7 @@ class Error
         $this->errorRule = $errorRule;
         $this->errorRuleMsg = $errorRuleMsg;
         $this->errorRuleArg = $errorRuleArg;
+        $this->validate = $validate;
     }
 
     /**
@@ -211,6 +218,16 @@ class Error
         }
         $defaultErrorTpl = $this->defaultErrorMsg[$this->errorRule];
         $errorMsg = str_replace(':fieldName', $fieldName, $defaultErrorTpl);
+
+        if (in_array($this->errorRule, ['equalWithColumn', 'differentWithColumn', 'lessThanWithColumn', 'greaterThanWithColumn'])) {
+            $withFiledName = is_array($this->errorRuleArg) ? array_shift($this->errorRuleArg) : $this->errorRuleArg;
+            if ($this->validate instanceof Validate) {
+                $withFiledName = $this->validate->getColumn($withFiledName)['alias'] ?? "{$withFiledName}";
+            }
+            $errorMsg = str_replace(":arg0", $withFiledName, $errorMsg);
+            return $errorMsg;
+        }
+
         if (is_array($this->errorRuleArg)) {
             $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
             if (in_array($this->errorRule, $arrayCheckFunc)) {

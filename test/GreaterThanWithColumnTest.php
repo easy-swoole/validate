@@ -20,7 +20,14 @@ class GreaterThanWithColumn extends BaseTestCase
         $this->validate->addColumn('bar')->greaterThanWithColumn('foo');
         $validateResult = $this->validate->validate(['bar' => 10, 'foo' => 11]);
         $this->assertFalse($validateResult);
-        $this->assertEquals("bar必须大于'foo'的值", $this->validate->getError()->__toString());
+        $this->assertEquals("bar必须大于foo的值", $this->validate->getError()->__toString());
+
+        $this->freeValidate();
+        $this->validate->addColumn('bar', 'Bar')->greaterThanWithColumn('foo');
+        $this->validate->addColumn('foo', 'Foo');
+        $validateResult = $this->validate->validate(['bar' => 10, 'foo' => 11]);
+        $this->assertFalse($validateResult);
+        $this->assertEquals("Bar必须大于Foo的值", $this->validate->getError()->__toString());
     }
 
     // 自定义错误信息断言

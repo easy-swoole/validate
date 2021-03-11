@@ -60,6 +60,11 @@ class Validate
         }
     }
 
+    public function getColumn(string $name): array
+    {
+        return $this->columns[$name] ?? [];
+    }
+
     /**
      * 获取所有要验证的字段
      * @return array
@@ -100,18 +105,18 @@ class Validate
                     $msg = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
                     if ($msg !== null) {
                         $msg = $ruleInfo['msg'] ?: $msg;
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg']);
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg'], $this);
                         return false;
                     }
                 } else if ($rule === 'func') {
                     // 如果当前是一个Func 那么可以直接Call这个Func进行判断
                     $result = call_user_func($ruleInfo['arg'], $spl, $column);
                     if ($result !== true) {  // 不全等 true 则为验证失败
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg']);
+                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg'], $this);
                         return false;
                     }
                 } else if (!call_user_func([$this, $rule], $spl, $column, $ruleInfo['arg'])) {
-                    $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg']);
+                    $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg'], $this);
                     return false;
                 }
             }
