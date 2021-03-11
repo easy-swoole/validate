@@ -207,6 +207,22 @@ class Error
     }
 
     /**
+     * @return Validate|null
+     */
+    public function getValidate(): ?Validate
+    {
+        return $this->validate;
+    }
+
+    /**
+     * @param Validate|null $validate
+     */
+    public function setValidate(?Validate $validate): void
+    {
+        $this->validate = $validate;
+    }
+    
+    /**
      * 组装默认错误消息
      * @return mixed|string
      */
