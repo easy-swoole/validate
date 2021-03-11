@@ -83,15 +83,15 @@ class Error
      * @param mixed $errorRuleArg 触发规则参数
      * @param Validate|null $validate
      */
-    function __construct($field, $fieldData, $fieldAlias, $errorRule, $errorRuleMsg, $errorRuleArg, ?Validate $validate = null)
+    function __construct(...$args)
     {
-        $this->field = $field;
-        $this->fieldData = $fieldData;
-        $this->fieldAlias = $fieldAlias;
-        $this->errorRule = $errorRule;
-        $this->errorRuleMsg = $errorRuleMsg;
-        $this->errorRuleArg = $errorRuleArg;
-        $this->validate = $validate;
+        $this->field = array_shift($args);
+        $this->fieldData = array_shift($args);
+        $this->fieldAlias = array_shift($args);
+        $this->errorRule = array_shift($args);
+        $this->errorRuleMsg = array_shift($args);
+        $this->errorRuleArg = array_shift($args);
+        $this->validate = array_shift($args);
     }
 
     /**
