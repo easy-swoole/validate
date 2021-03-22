@@ -103,12 +103,12 @@ class Rule
 
     /**
      * 自定义验证器调用
-     * @param ValidateInterface $rule
+     * @param AbstractValidateFunction $rule
      * @param null $msg
      * @param mixed ...$args
      * @return $this
      */
-    public function callUserRule(ValidateInterface $rule, $msg = null, ...$args)
+    public function callUserRule(AbstractValidateFunction $rule, $msg = null, ...$args)
     {
         $this->ruleMap[$rule->name()] = [
             'arg'      => $args,

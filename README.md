@@ -126,7 +126,7 @@ if ($bool) {
 
 require_once "./vendor/autoload.php";
 
-class CustomValidator implements \EasySwoole\Validate\ValidateInterface
+class CustomValidator implements \EasySwoole\Validate\AbstractValidateFunction
 {
     /**
      * 返回当前校验规则的名字

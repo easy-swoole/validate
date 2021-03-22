@@ -9,11 +9,11 @@
 namespace EasySwoole\Validate\test;
 
 use EasySwoole\Spl\SplArray;
-use EasySwoole\Validate\ValidateInterface;
+use EasySwoole\Validate\AbstractValidateFunction;
 
 require_once 'BaseTestCase.php';
 
-class CustomValidator implements ValidateInterface
+class CustomValidator implements AbstractValidateFunction
 {
     /**
      * 返回当前校验规则的名字

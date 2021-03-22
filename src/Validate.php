@@ -87,6 +87,7 @@ class Validate
         foreach ($this->columns as $column => $item) {
             $columnData = $spl->get($column);
             $ruleMap = $item['rule']->getRuleMap();
+            var_dump($ruleMap);
             //多维数组
             if(strpos($column,'*') !== false && is_array($columnData)){
                 foreach ($columnData as $datum){
