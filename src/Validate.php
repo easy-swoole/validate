@@ -85,44 +85,23 @@ class Validate
         $spl = new SplArray($data);
 
         foreach ($this->columns as $column => $item) {
+            $columnData = $spl->get($column);
             /** @var Rule $rule */
             $rule = $item['rule'];
-            $rules = $rule->getRuleMap();
-            /*
-             * 优先检测是否带有optional选项
-             * 如果设置了optional又不存在对应字段，则跳过该字段检测
-             * 额外的如果这个字段是空字符串一样会认为不存在该字段
-             */
-            if (isset($rules['optional']) && (!isset($data[$column]) || $data[$column] === '')) {
-                $this->verifiedData[$column] = $spl->get($column);
-                continue;
+            //多维数组
+            if(strpos($column,'*') !== false){
+
+            }else{
+
             }
-            foreach ($rules as $rule => $ruleInfo) {
-                //自定义验证类处理
-                if (!method_exists($this, $rule)) {
-                    /** @var ValidateInterface $userRule */
-                    $userRule = $ruleInfo['userRule'];
-                    $msg = $userRule->validate($spl, $column, ...$ruleInfo['arg']);
-                    if ($msg !== null) {
-                        $msg = $ruleInfo['msg'] ?: $msg;
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $msg, $ruleInfo['arg'], $this);
-                        return false;
-                    }
-                } else if ($rule === 'func') {
-                    // 如果当前是一个Func 那么可以直接Call这个Func进行判断
-                    $result = call_user_func($ruleInfo['arg'], $spl, $column);
-                    if ($result !== true) {  // 不全等 true 则为验证失败
-                        $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg'], $this);
-                        return false;
-                    }
-                } else if (!call_user_func([$this, $rule], $spl, $column, $ruleInfo['arg'])) {
-                    $this->error = new Error($column, $spl->get($column), $item['alias'], $rule, $ruleInfo['msg'], $ruleInfo['arg'], $this);
-                    return false;
-                }
-            }
-            $this->verifiedData[$column] = $spl->get($column);
+            $this->verifiedData[$column] = $columnData;
         }
         return true;
+    }
+
+    private function runRule($itemData,$rule)
+    {
+
     }
 
     /**
