@@ -86,22 +86,27 @@ class Validate
 
         foreach ($this->columns as $column => $item) {
             $columnData = $spl->get($column);
-            /** @var Rule $rule */
-            $rule = $item['rule'];
+            $ruleMap = $item['rule']->getRuleMap();
             //多维数组
-            if(strpos($column,'*') !== false){
-
+            if(strpos($column,'*') !== false && is_array($columnData)){
+                foreach ($columnData as $datum){
+                    if($this->runRule($datum,$ruleMap)){
+                        return false;
+                    }
+                }
             }else{
-
+                if($this->runRule($columnData,$ruleMap)){
+                    return false;
+                }
             }
             $this->verifiedData[$column] = $columnData;
         }
         return true;
     }
 
-    private function runRule($itemData,$rule)
+    private function runRule($itemData,$rules):?Error
     {
-
+        return null;
     }
 
     /**
@@ -121,7 +126,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function activeUrl(SplArray $splArray, string $column, $arg): bool
+    private function activeUrl($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_string($data)) {
@@ -141,7 +146,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function alpha(SplArray $splArray, string $column, $arg): bool
+    private function alpha($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_string($data)) {
@@ -158,7 +163,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function alphaNum(SplArray $splArray, string $column, $arg): bool
+    private function alphaNum($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_string($data)) {
@@ -175,7 +180,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function alphaDash(SplArray $splArray, string $column, $arg): bool
+    private function alphaDash($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_string($data)) {
@@ -192,7 +197,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function between(SplArray $splArray, string $column, $args): bool
+    private function between($data, $args): bool
     {
         $data = $splArray->get($column);
         $min = array_shift($args);
@@ -215,7 +220,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function bool(SplArray $splArray, string $column, $arg): bool
+    private function bool($data, $arg): bool
     {
         $data = $splArray->get($column);
         if ($data === 1 || $data === true || $data === 0 || $data === false) {
@@ -232,7 +237,7 @@ class Validate
      * @param null|integer $arg
      * @return bool
      */
-    private function decimal(SplArray $splArray, string $column, $arg): bool
+    private function decimal($data, $arg): bool
     {
         $data = strval($splArray->get($column));
         if (is_null($arg)) {
@@ -253,7 +258,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function dateBefore(SplArray $splArray, string $column, $arg): bool
+    private function dateBefore($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (empty($arg)) {
@@ -282,7 +287,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function dateAfter(SplArray $splArray, string $column, $arg): bool
+    private function dateAfter($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (empty($arg)) {
@@ -311,7 +316,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function equal(SplArray $splArray, string $column, $args): bool
+    private function equal($data, $args): bool
     {
         $data = $splArray->get($column);
         $value = array_shift($args);
@@ -335,7 +340,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function different(SplArray $splArray, string $column, $args): bool
+    private function different($data, $args): bool
     {
         $data = $splArray->get($column);
         $value = array_shift($args);
@@ -359,7 +364,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function equalWithColumn(SplArray $splArray, string $column, $args): bool
+    private function equalWithColumn($data, $args): bool
     {
         $data = $splArray->get($column);
         $fieldName = array_shift($args);
@@ -384,7 +389,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function differentWithColumn(SplArray $splArray, string $column, $args): bool
+    private function differentWithColumn($data, $args): bool
     {
         $data = $splArray->get($column);
         $fieldName = array_shift($args);
@@ -409,7 +414,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function lessThanWithColumn(SplArray $splArray, string $column, $args): bool
+    private function lessThanWithColumn($data, $args): bool
     {
         if (!$this->numeric($splArray, $column, null)) {
             return false;
@@ -433,7 +438,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function greaterThanWithColumn(SplArray $splArray, string $column, $args): bool
+    private function greaterThanWithColumn($data, $args): bool
     {
         if (!$this->numeric($splArray, $column, null)) {
             return false;
@@ -457,7 +462,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function float(SplArray $splArray, string $column, $arg): bool
+    private function float($data, $arg): bool
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_FLOAT) !== false;
@@ -470,7 +475,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function func(SplArray $splArray, string $column, $arg): bool
+    private function func($data, $arg): bool
     {
         return call_user_func($arg, $splArray, $column);
     }
@@ -482,7 +487,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function inArray(SplArray $splArray, string $column, $args): bool
+    private function inArray($data, $args): bool
     {
         $data = $splArray->get($column);
         $array = array_shift($args);
@@ -497,7 +502,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function integer(SplArray $splArray, string $column, $arg): bool
+    private function integer($data, $arg): bool
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_INT) !== false;
@@ -510,7 +515,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function isIp(SplArray $splArray, string $column, $arg): bool
+    private function isIp($data, $arg): bool
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_IP);
@@ -523,7 +528,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function notEmpty(SplArray $splArray, string $column, $arg): bool
+    private function notEmpty($data, $arg): bool
     {
         $data = $splArray->get($column);
         if ($data === 0 || $data === '0') {
@@ -540,7 +545,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function numeric(SplArray $splArray, string $column, $arg): bool
+    private function numeric($data, $arg): bool
     {
         return is_numeric($splArray->get($column));
     }
@@ -552,7 +557,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function notInArray(SplArray $splArray, string $column, $args): bool
+    private function notInArray($data, $args): bool
     {
         $data = $splArray->get($column);
         $array = array_shift($args);
@@ -567,7 +572,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function length(SplArray $splArray, string $column, $arg): bool
+    private function length($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
@@ -596,7 +601,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function lengthMax(SplArray $splArray, string $column, $arg): bool
+    private function lengthMax($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
@@ -625,7 +630,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function lengthMin(SplArray $splArray, string $column, $arg): bool
+    private function lengthMin($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
@@ -654,7 +659,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function betweenLen(SplArray $splArray, string $column, $args): bool
+    private function betweenLen($data, $args): bool
     {
         $data = $splArray->get($column);
         $min = array_shift($args);
@@ -689,7 +694,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function max(SplArray $splArray, string $column, $arg): bool
+    private function max($data, $arg): bool
     {
         if (!$this->numeric($splArray, $column, $arg)) {
             return false;
@@ -708,7 +713,7 @@ class Validate
      * @param          $arg
      * @return false|int
      */
-    private function money(SplArray $splArray, string $column, $arg)
+    private function money($data, $arg)
     {
         if (is_null($arg)) $arg = '';
         $data = $splArray->get($column);
@@ -723,7 +728,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function min(SplArray $splArray, string $column, $arg): bool
+    private function min($data, $arg): bool
     {
         if (!$this->numeric($splArray, $column, $arg)) {
             return false;
@@ -742,7 +747,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function optional(SplArray $splArray, string $column, $arg)
+    private function optional($data, $arg)
     {
         return true;
     }
@@ -754,7 +759,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function regex(SplArray $splArray, string $column, $arg): bool
+    private function regex($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) || is_string($data)) {
@@ -783,7 +788,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function required(SplArray $splArray, string $column, $arg): bool
+    private function required($data, $arg): bool
     {
         return isset($splArray[$column]);
     }
@@ -795,7 +800,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function timestamp(SplArray $splArray, string $column, $arg): bool
+    private function timestamp($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data)) {
@@ -816,7 +821,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function timestampBeforeDate(SplArray $splArray, string $column, $arg): bool
+    private function timestampBeforeDate($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data)) {
@@ -838,7 +843,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function timestampAfterDate(SplArray $splArray, string $column, $arg): bool
+    private function timestampAfterDate($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data)) {
@@ -860,7 +865,7 @@ class Validate
      * @param          $arg
      * @return bool
      */
-    private function timestampBefore(SplArray $splArray, string $column, $arg): bool
+    private function timestampBefore($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) && is_numeric($arg)) {
@@ -877,7 +882,7 @@ class Validate
      * @param          $arg
      * @return bool
      */
-    private function timestampAfter(SplArray $splArray, string $column, $arg): bool
+    private function timestampAfter($data, $arg): bool
     {
         $data = $splArray->get($column);
         if (is_numeric($data) && is_numeric($arg)) {
@@ -894,7 +899,7 @@ class Validate
      * @param $arg
      * @return bool
      */
-    private function url(SplArray $splArray, string $column, $arg): bool
+    private function url($data, $arg): bool
     {
         $data = $splArray->get($column);
         return filter_var($data, FILTER_VALIDATE_URL);
@@ -908,7 +913,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function allowFile(SplArray $splArray, string $column, $args): bool
+    private function allowFile($data, $args): bool
     {
         $data = $splArray->get($column);
         if (!$data instanceof UploadedFileInterface) {
@@ -940,7 +945,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function allowFileType(SplArray $splArray, string $column, $args): bool
+    private function allowFileType($data, $args): bool
     {
         $data = $splArray->get($column);
         if (!$data instanceof UploadedFileInterface) {
@@ -964,7 +969,7 @@ class Validate
      * @param $args
      * @return bool
      */
-    private function isArray(SplArray $splArray, string $column, $args): bool
+    private function isArray($data, $args): bool
     {
         $data = $splArray->get($column);
         return is_array($data);
