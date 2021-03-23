@@ -4,23 +4,23 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class ActiveUrl extends AbstractValidateFunction
+class Timestamp extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'ActiveUrl';
+        return 'Timestamp';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        if (!is_string($itemData)) {
+        if (!is_numeric($itemData)) {
             return false;
         }
 
-        if (!filter_var($itemData, FILTER_VALIDATE_URL)) {
-            return false;
+        if (strtotime(date('d-m-Y H:i:s', $itemData)) === (int)$itemData) {
+            return true;
         }
 
-        return checkdnsrr(parse_url($itemData, PHP_URL_HOST));
+        return false;
     }
 }

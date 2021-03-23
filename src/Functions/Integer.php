@@ -4,15 +4,15 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class Optional extends AbstractValidateFunction
+class Integer extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'Optional';
+        return 'Integer';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        return true;
+        return filter_var($itemData, FILTER_VALIDATE_INT) !== false;
     }
 }

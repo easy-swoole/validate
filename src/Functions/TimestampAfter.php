@@ -4,19 +4,19 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class NotEmpty extends AbstractValidateFunction
+class TimestampAfter extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'NotEmpty';
+        return 'TimestampAfter';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        if ($itemData === 0 || $itemData === '0') {
-            return true;
+        if (is_numeric($itemData) && is_numeric($arg)) {
+            return intval($itemData) > intval($arg);
         }
 
-        return !empty($itemData);
+        return false;
     }
 }

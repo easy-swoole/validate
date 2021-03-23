@@ -4,23 +4,24 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class ActiveUrl extends AbstractValidateFunction
+class Max extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'ActiveUrl';
+        return 'Max';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        if (!is_string($itemData)) {
+        if (!(new Numeric())->validate($itemData, null, $column, $validate)) {
             return false;
         }
 
-        if (!filter_var($itemData, FILTER_VALIDATE_URL)) {
+        $data = $itemData * 1;
+        if ($data > $arg) {
             return false;
         }
 
-        return checkdnsrr(parse_url($itemData, PHP_URL_HOST));
+        return true;
     }
 }
