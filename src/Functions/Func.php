@@ -4,15 +4,19 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class Optional extends AbstractValidateFunction
+class Func extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'Optional';
+        return 'Func';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        return true;
+        if (!is_callable($arg)) {
+            return false;
+        }
+
+        return call_user_func($arg, $itemData, $column, $validate);
     }
 }

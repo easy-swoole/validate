@@ -4,16 +4,21 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class IsBool extends AbstractValidateFunction
+class TimestampBeforeDate extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'bool';
+        return 'TimestampBeforeDate';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        if ($itemData === 1 || $itemData === true || $itemData === 0 || $itemData === false) {
+        if (!is_numeric($itemData)) {
+            return false;
+        }
+
+        $time = strtotime($arg);
+        if ($time !== false && $time > 0 && $time > $itemData) {
             return true;
         }
 

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2018/7/6
- * Time: 下午12:56
- */
 
 namespace EasySwoole\Validate;
 
@@ -12,19 +6,23 @@ namespace EasySwoole\Validate;
  * 错误消息
  * Class Error
  * @revise : 2018-11-15 by eValor
- * @package EasySwoole\Validate
  */
 class Error
 {
     private $field;
+
     private $fieldData;
+
     private $fieldAlias;
+
     private $errorRule;
+
     private $errorRuleMsg;
+
     private $errorRuleArg;
 
     /**
-     * @var Validate|null
+     * @var null|Validate
      */
     private $validate;
 
@@ -70,33 +68,26 @@ class Error
         'allowFileType' => ':fieldName文件类型必须在:arg0内',
         'isArray' => ':fieldName类型必须为数组',
         'lessThanWithColumn' => ':fieldName必须小于:arg0的值',
-        'greaterThanWithColumn' => ':fieldName必须大于:arg0的值'
+        'greaterThanWithColumn' => ':fieldName必须大于:arg0的值',
     ];
 
     /**
      * Error constructor.
-     * @param string $field 字段名称
-     * @param mixed $fieldData 字段数据
-     * @param string $fieldAlias 字段别名
-     * @param string $errorRule 触发规则名
-     * @param string $errorRuleMsg 触发规则消息
-     * @param mixed $errorRuleArg 触发规则参数
-     * @param Validate|null $validate
+     * @param array $args
      */
-    function __construct(...$args)
+    public function __construct(...$args)
     {
-        $this->field = array_shift($args);
-        $this->fieldData = array_shift($args);
-        $this->fieldAlias = array_shift($args);
-        $this->errorRule = array_shift($args);
-        $this->errorRuleMsg = array_shift($args);
-        $this->errorRuleArg = array_shift($args);
-        $this->validate = array_shift($args);
+        $this->field = array_shift($args); // 字段名称
+        $this->fieldData = array_shift($args); // 字段数据
+        $this->fieldAlias = array_shift($args); // 字段别名
+        $this->errorRule = array_shift($args); // 触发规则名
+        $this->errorRuleMsg = array_shift($args); // 触发规则信息
+        $this->errorRuleArg = array_shift($args); // 触发规则参数
+        $this->validate = array_shift($args); // validate 实例
     }
 
     /**
      * 获取字段名称
-     * @return string
      */
     public function getField(): string
     {
@@ -105,7 +96,6 @@ class Error
 
     /**
      * 设置字段名称
-     * @param string $field
      */
     public function setField(string $field): void
     {
@@ -141,7 +131,6 @@ class Error
 
     /**
      * 设置字段别名
-     * @param string $fieldAlias
      */
     public function setFieldAlias(string $fieldAlias): void
     {
@@ -150,7 +139,6 @@ class Error
 
     /**
      * 获取触发规则名
-     * @return string
      */
     public function getErrorRule(): string
     {
@@ -159,7 +147,6 @@ class Error
 
     /**
      * 设置触发规则名
-     * @param string $errorRule
      */
     public function setErrorRule(string $errorRule): void
     {
@@ -168,20 +155,18 @@ class Error
 
     /**
      * 获取触发规则消息
-     * @return string
      */
     public function getErrorRuleMsg(): string
     {
         if (!empty($this->errorRuleMsg)) {
             return $this->errorRuleMsg;
-        } else {
-            return $this->parserDefaultErrorMsg();
         }
+
+        return $this->parserDefaultErrorMsg();
     }
 
     /**
      * 设置触发规则消息
-     * @param string $errorRuleMsg
      */
     public function setErrorRuleMsg(string $errorRuleMsg): void
     {
@@ -206,22 +191,16 @@ class Error
         $this->errorRuleArg = $errorRuleArg;
     }
 
-    /**
-     * @return Validate|null
-     */
     public function getValidate(): ?Validate
     {
         return $this->validate;
     }
 
-    /**
-     * @param Validate|null $validate
-     */
     public function setValidate(?Validate $validate): void
     {
         $this->validate = $validate;
     }
-    
+
     /**
      * 组装默认错误消息
      * @return mixed|string
@@ -240,15 +219,15 @@ class Error
             if ($this->validate instanceof Validate) {
                 $withFiledName = $this->validate->getColumn($withFiledName)['alias'] ?? "{$withFiledName}";
             }
-            $errorMsg = str_replace(":arg0", $withFiledName, $errorMsg);
-            return $errorMsg;
+
+            return str_replace(':arg0', $withFiledName, $errorMsg);
         }
 
         if (is_array($this->errorRuleArg)) {
             $arrayCheckFunc = ['inArray', 'notInArray', 'allowFile', 'allowFileType'];
             if (in_array($this->errorRule, $arrayCheckFunc)) {
                 $arrayValue = array_shift($this->errorRuleArg);
-                $errorMsg = str_replace(":arg0", '[' . implode(',', $arrayValue) . ']', $errorMsg);
+                $errorMsg = str_replace(':arg0', '[' . implode(',', $arrayValue) . ']', $errorMsg);
             } else {
                 foreach ($this->errorRuleArg as $index => $arg) {
                     $argValue = is_string($arg) ? $arg : json_encode($arg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -258,20 +237,19 @@ class Error
         } else {
             if (is_object($this->errorRuleArg)) {
                 if (method_exists($this->errorRuleArg, '__toString')) {
-                    return str_replace(":arg0", $this->errorRuleArg->__toString(), $errorMsg);
-                } else {
-                    return str_replace(":arg0", 'OBJECT', $errorMsg);
+                    return str_replace(':arg0', $this->errorRuleArg->__toString(), $errorMsg);
                 }
-            } else {
-                $errorMsg = str_replace(":arg0", var_export($this->errorRuleArg, true), $errorMsg);
+
+                return str_replace(':arg0', 'OBJECT', $errorMsg);
             }
+            $errorMsg = str_replace(':arg0', var_export($this->errorRuleArg, true), $errorMsg);
         }
+
         return $errorMsg;
     }
 
     /**
      * 返回错误消息
-     * @return string
      */
     public function __toString(): string
     {

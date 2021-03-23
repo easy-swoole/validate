@@ -4,15 +4,18 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class Optional extends AbstractValidateFunction
+class NotInArray extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'Optional';
+        return 'NotInArray';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        return true;
+        $array = array_shift($arg);
+        $isStrict = array_shift($arg);
+
+        return !in_array($itemData, $array, $isStrict);
     }
 }

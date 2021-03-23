@@ -4,19 +4,19 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-class NotEmpty extends AbstractValidateFunction
+class Regex extends AbstractValidateFunction
 {
     public function name(): string
     {
-        return 'NotEmpty';
+        return 'Regex';
     }
 
     public function validate($itemData, $arg, $column, Validate $validate): bool
     {
-        if ($itemData === 0 || $itemData === '0') {
-            return true;
+        if (!is_numeric($itemData) && !is_string($itemData)) {
+            return false;
         }
 
-        return !empty($itemData);
+        return preg_match($arg, (string)$itemData) ? true : false;
     }
 }
