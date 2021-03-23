@@ -6,17 +6,16 @@ namespace EasySwoole\Validate\Functions;
 
 use EasySwoole\Validate\Validate;
 
-
-class ActiveUrl extends AbstractValidateFunction
+class Optional extends AbstractValidateFunction
 {
 
     function name(): string
     {
-        return 'ActiveUrl';
+        return 'Optional';
     }
 
     function validate($itemData, $arg, $column, Validate $validate):bool
     {
-
+        return true;
     }
 }

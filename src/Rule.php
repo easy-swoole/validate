@@ -666,4 +666,13 @@ class Rule
         ];
         return $this;
     }
+
+    function custom(string $rule,$arg = null,$msg = null):Rule
+    {
+        $this->ruleMap[$rule] = [
+            'arg' => $arg,
+            'msg' => $msg
+        ];
+        return $this;
+    }
 }
