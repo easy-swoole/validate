@@ -17,6 +17,13 @@ class ActiveUrl extends AbstractValidateFunction
 
     function validate($itemData, $arg, $column, Validate $validate):bool
     {
-
+        if (is_string($itemData)) {
+            if (!filter_var($itemData, FILTER_VALIDATE_URL)) {
+                return false;
+            }
+            return checkdnsrr(parse_url($itemData, PHP_URL_HOST));
+        } else {
+            return false;
+        }
     }
 }
