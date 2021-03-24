@@ -130,7 +130,6 @@ class Validate
 
     /**
      * 添加一个待验证字段
-     * @param ?string $alias
      */
     public function addColumn(string $name, ?string $alias = null, bool $reset = false): Rule
     {
@@ -155,21 +154,83 @@ class Validate
         }
     }
 
+    /**
+     * 获取一个待验证字段
+     */
     public function getColumn(string $name): array
     {
         return $this->columns[$name] ?? [];
     }
 
-    /**
-     * 获取所有要验证的字段
-     */
-    public function getColumns(): array
+    public static function make(array $rules = [], array $message = [], array $alias = []): self
     {
-        return array_keys($this->columns);
+        $errMsgMap = [];
+        // eg: msgMap[field][rule] => msg
+
+        foreach ($message as $field => $msg) {
+            // eg: field.required
+
+            $fieldRet = explode('.', $field, 2);
+            $fieldName = current($fieldRet);
+            $fieldRule = next($fieldRet);
+
+            if (!$fieldName) {
+                throw new Runtime(sprintf('Error message[%s] does not specify a field', $msg));
+            }
+
+            if ($fieldRule) {
+                $errMsgMap[$fieldName][$fieldRule] = $msg;
+                continue;
+            }
+
+            // No validation rules will reset all error messages
+            $errMsgMap[$fieldName] = $msg;
+        }
+
+        $instance = new static();
+        foreach ($rules as $key => $rule) {
+            if (!$key) {
+                throw new Runtime('The verified field is empty');
+            }
+
+            /** @var Rule $validateRule */
+            $validateRule = $instance->addColumn($key, $alias[$key] ?? null);
+            // eg: rule 'required|max:25|between:1,100'
+            $rule = explode('|', $rule);
+            foreach ($rule as $action) {
+                $actionArgs = [];
+
+                if (strpos($action, ':')) {
+                    // eg max:25
+                    list($action, $arg) = explode(':', $action, 2);
+
+                    if (!strpos($arg, ',')) {
+                        $actionArgs[] = $arg;
+                    } else {
+                        // eg between:1,100
+                        $arg = explode(',', $arg);
+                        $actionArgs = array_merge($actionArgs, $arg);
+//                        $actionArgs[] = $arg;
+                    }
+                }
+
+                $errMsg = $errMsgMap[$key] ?? null;
+                if (is_array($errMsg)) {
+                    $errMsg = $errMsg[$action] ?? null;
+                }
+
+                $actionArgs[] = $errMsg;
+                $validateRule->{$action}(...$actionArgs);
+            }
+        }
+
+        return $instance;
     }
 
     /**
      * 验证字段是否合法
+     * @param array $data
+     * @return bool
      * @throws Runtime
      */
     public function validate(array $data): bool
@@ -203,6 +264,7 @@ class Validate
      * @param $itemData
      * @param $rules
      * @param $column
+     * @return null|Error
      * @throws Runtime
      */
     private function runRule($itemData, $rules, $column): ?Error
@@ -246,9 +308,10 @@ class Validate
     }
 
     /**
+     * @param AbstractValidateFunction $function
      * @param bool $overlay 是否允许覆盖
-     * @throws Runtime
      * @return $this
+     * @throws Runtime
      */
     public function addFunction(AbstractValidateFunction $function, bool $overlay = false): Validate
     {
