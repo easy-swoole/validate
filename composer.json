@@ -28,6 +28,11 @@
             "EasySwoole\\Validate\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "EasySwoole\\Validate\\tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "easyswoole/phpunit": "^1.0"
     }

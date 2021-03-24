@@ -130,7 +130,6 @@ class Validate
 
     /**
      * 添加一个待验证字段
-     * @param ?string $alias
      */
     public function addColumn(string $name, ?string $alias = null, bool $reset = false): Rule
     {
@@ -155,21 +154,18 @@ class Validate
         }
     }
 
+    /**
+     * 获取一个待验证字段
+     */
     public function getColumn(string $name): array
     {
         return $this->columns[$name] ?? [];
     }
 
     /**
-     * 获取所有要验证的字段
-     */
-    public function getColumns(): array
-    {
-        return array_keys($this->columns);
-    }
-
-    /**
      * 验证字段是否合法
+     * @param array $data
+     * @return bool
      * @throws Runtime
      */
     public function validate(array $data): bool
@@ -203,6 +199,7 @@ class Validate
      * @param $itemData
      * @param $rules
      * @param $column
+     * @return null|Error
      * @throws Runtime
      */
     private function runRule($itemData, $rules, $column): ?Error
@@ -246,9 +243,10 @@ class Validate
     }
 
     /**
+     * @param AbstractValidateFunction $function
      * @param bool $overlay 是否允许覆盖
-     * @throws Runtime
      * @return $this
+     * @throws Runtime
      */
     public function addFunction(AbstractValidateFunction $function, bool $overlay = false): Validate
     {

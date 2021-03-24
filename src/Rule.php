@@ -58,6 +58,11 @@ class Rule
         return $this;
     }
 
+    /**
+     * 字母数字下划线和破折号
+     * @param null $msg
+     * @return $this
+     */
     public function alphaDash($msg = null)
     {
         $this->ruleMap['alphaDash'] = [
@@ -103,7 +108,8 @@ class Rule
     }
 
     /**
-     * 自定义验证器调用
+     * 自定义验证
+     * @param AbstractValidateFunction $rule
      * @param null $msg
      * @param mixed ...$args
      * @return $this
@@ -137,7 +143,7 @@ class Rule
     /**
      * 给定参数是否在某日期之前
      * @param null|string $msg
-     * @param ?string $date
+     * @param null|string $date
      * @return $this
      */
     public function dateBefore(?string $date = null, $msg = null)
@@ -153,7 +159,7 @@ class Rule
     /**
      * 给定参数是否在某日期之后
      * @param null|string $msg
-     * @param ?string $date
+     * @param null|string $date
      * @return $this
      */
     public function dateAfter(?string $date = null, $msg = null)
@@ -238,6 +244,7 @@ class Rule
      * bar字段必须小于foo字段
      * @param $fieldName
      * @param null $msg
+     * @return $this
      */
     public function lessThanWithColumn($fieldName, $msg = null)
     {
@@ -245,12 +252,15 @@ class Rule
             'msg' => $msg,
             'arg' => $fieldName,
         ];
+
+        return $this;
     }
 
     /**
      * bar字段必须大于foo字段
      * @param $fieldName
      * @param null $msg
+     * @return $this
      */
     public function greaterThanWithColumn($fieldName, $msg = null)
     {
@@ -258,6 +268,8 @@ class Rule
             'msg' => $msg,
             'arg' => $fieldName,
         ];
+
+        return $this;
     }
 
     /**
@@ -448,9 +460,10 @@ class Rule
     /**
      * 验证值不大于(相等视为不通过)
      * @param mixed $max
-     * @param ?string $msg
+     * @param null|string $msg
+     * @return $this
      */
-    public function max($max, ?string $msg = null): Rule
+    public function max($max, ?string $msg = null)
     {
         $this->ruleMap['max'] = [
             'arg' => $max,
@@ -463,7 +476,8 @@ class Rule
     /**
      * 验证值不小于(相等视为不通过)
      * @param mixed $min
-     * @param ?string $msg
+     * @param null|string $msg
+     * @return $this
      */
     public function min($min, ?string $msg = null): Rule
     {
@@ -479,8 +493,10 @@ class Rule
      * 验证值是合法的金额
      * 100 | 100.1 | 100.01
      * @param null|int $precision 小数点位数
+     * @param string|null $msg
+     * @return $this
      */
-    public function money(?int $precision = null, string $msg = null): Rule
+    public function money(?int $precision = null, string $msg = null)
     {
         $this->ruleMap['money'] = [
             'arg' => $precision,
@@ -645,6 +661,8 @@ class Rule
     }
 
     /**
+     * 允许上传的文件
+     * @param array $type
      * @param bool $isStrict
      * @param null $msg
      * @return $this
@@ -660,6 +678,8 @@ class Rule
     }
 
     /**
+     * 允许上传文件的类型
+     * @param array $type
      * @param bool $isStrict
      * @param null $msg
      * @return $this
@@ -682,16 +702,6 @@ class Rule
     {
         $this->ruleMap['isArray'] = [
             'arg' => null,
-            'msg' => $msg,
-        ];
-
-        return $this;
-    }
-
-    public function custom(string $rule, $arg = null, $msg = null): Rule
-    {
-        $this->ruleMap[$rule] = [
-            'arg' => $arg,
             'msg' => $msg,
         ];
 

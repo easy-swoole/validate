@@ -22,6 +22,6 @@ class Decimal extends AbstractValidateFunction
         }
 
         // "/^(0|[1-9]+[0-9]*)(.[0-9]{1,' . {$arg} . '})?$/"
-        return (new Regex())->validate($itemData, "/^(-)?(([1-9]{1}d*)|(0{1}))(.d{{$arg}})$/", $column, $validate);
+        return (new Regex())->validate($itemData, "/^-?(([1-9]\d*)|0)\.\d{1,$arg}$/", $column, $validate);
     }
 }
