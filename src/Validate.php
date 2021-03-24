@@ -162,6 +162,71 @@ class Validate
         return $this->columns[$name] ?? [];
     }
 
+    public static function make(array $rules = [], array $message = [], array $alias = []): self
+    {
+        $errMsgMap = [];
+        // eg: msgMap[field][rule] => msg
+
+        foreach ($message as $field => $msg) {
+            // eg: field.required
+
+            $fieldRet = explode('.', $field, 2);
+            $fieldName = current($fieldRet);
+            $fieldRule = next($fieldRet);
+
+            if (!$fieldName) {
+                throw new Runtime(sprintf('Error message[%s] does not specify a field', $msg));
+            }
+
+            if ($fieldRule) {
+                $errMsgMap[$fieldName][$fieldRule] = $msg;
+                continue;
+            }
+
+            // No validation rules will reset all error messages
+            $errMsgMap[$fieldName] = $msg;
+        }
+
+        $instance = new static();
+        foreach ($rules as $key => $rule) {
+            if (!$key) {
+                throw new Runtime('The verified field is empty');
+            }
+
+            /** @var Rule $validateRule */
+            $validateRule = $instance->addColumn($key, $alias[$key] ?? null);
+            // eg: rule 'required|max:25|between:1,100'
+            $rule = explode('|', $rule);
+            foreach ($rule as $action) {
+                $actionArgs = [];
+
+                if (strpos($action, ':')) {
+                    // eg max:25
+                    list($action, $arg) = explode(':', $action, 2);
+
+                    if (!strpos($arg, ',')) {
+                        $actionArgs[] = $arg;
+                    } else {
+                        // eg between:1,100
+                        $arg = explode(',', $arg);
+                        $actionArgs = array_merge($actionArgs, $arg);
+//                        $actionArgs[] = $arg;
+                    }
+                }
+
+                $errMsg = $errMsgMap[$key] ?? null;
+                if (is_array($errMsg)) {
+                    $errMsg = $errMsg[$action] ?? null;
+                }
+
+                $actionArgs[] = $errMsg;
+                $validateRule->{$action}(...$actionArgs);
+            }
+        }
+
+        return $instance;
+    }
+
     /**
      * 验证字段是否合法
      * @param array $data
