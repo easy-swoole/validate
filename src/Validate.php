@@ -170,9 +170,15 @@ class Validate
         foreach ($message as $field => $msg) {
             // eg: field.required
 
-            $fieldRet = explode('.', $field, 2);
-            $fieldName = current($fieldRet);
-            $fieldRule = next($fieldRet);
+            $pos = strrpos($field, '.');
+            if ($pos === false) {
+                // No validation rules will reset all error messages
+                $errMsgMap[$field] = $msg;
+                continue;
+            }
+
+            $fieldName = substr($field, 0, $pos);
+            $fieldRule = substr($field, $pos + 1);
 
             if (!$fieldName) {
                 throw new Runtime(sprintf('Error message[%s] does not specify a field', $msg));

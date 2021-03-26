@@ -54,11 +54,13 @@ class WildcardTest extends BaseTestCase
 
         $validate = Validate::make([
             'a.*.a' => 'required|notEmpty|between:1,10'
+        ], [
+            'a.*.a.between' => '不在1-10之间'
         ]);
         $this->assertFalse($validate->validate([
             'a' => ['a' => ['a' => 11]],
             'b' => ['a' => 11]
         ]));
-        $this->assertEquals('a.*.a只能在 1 - 10 之间', $validate->getError()->getErrorRuleMsg());
+        $this->assertEquals('不在1-10之间', $validate->getError()->getErrorRuleMsg());
     }
 }
