@@ -86,9 +86,9 @@ class CustomValidator extends \EasySwoole\Validate\Functions\AbstractValidateFun
 $data     = ['mobile' => '12312345678'];
 $validate = new \EasySwoole\Validate\Validate();
 // 先添加function 第一个参数为类 第二个参数 是否覆盖 当存在相同名字的验证规则 参数true会替换掉
-$validate->addFunction(new \EasySwoole\Validate\tests\CustomValidator(),false);
+$validate->addFunction(new CustomValidator(),false);
 // 自定义错误消息示例
-$validate->addColumn('mobile')->required('手机号不能为空')->callUserRule(new \EasySwoole\Validate\tests\CustomValidator(), '手机号格式不正确');
+$validate->addColumn('mobile')->required('手机号不能为空')->callUserRule(new CustomValidator(), '手机号格式不正确');
 $bool = $validate->validate($data); // 验证结果
 if ($bool) {
     var_dump("验证通过");
@@ -107,7 +107,7 @@ if ($bool) {
 
 $validate = new \EasySwoole\Validate\Validate();
 // * 可以放在任意位置 且有多个
-$validate->addColumn('*.a')->required()->notEmpty()->max(1,10);
+$validate->addColumn('*.a')->required()->notEmpty()->between(1,10);
 $bool = $validate->validate([
             'a' => ['a' => 2],
             'b' => ['a' => 11]
