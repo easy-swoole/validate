@@ -107,7 +107,7 @@ if ($bool) {
 
 $validate = new \EasySwoole\Validate\Validate();
 // * 可以放在任意位置 且有多个
-$validate->addColumn('*.a')->required()->notEmpty()->max(1,10);
+$validate->addColumn('*.a')->required()->notEmpty()->between(1,10);
 $bool = $validate->validate([
             'a' => ['a' => 2],
             'b' => ['a' => 11]
