@@ -26,7 +26,7 @@ class Error
      */
     private $validate;
 
-    private $defaultErrorMsg = [
+    private $ruleMsgMapping = [
         'activeUrl' => ':fieldName必须是可访问的网址',
         'alpha' => ':fieldName只能是字母',
         'alphaNum' => ':fieldName只能是字母和数字',
@@ -162,7 +162,13 @@ class Error
             return $this->errorRuleMsg;
         }
 
-        return $this->parserDefaultErrorMsg();
+        return $this->parserRuleMsg();
+    }
+
+    function setRuleMsgMapping(array $mapping):Error
+    {
+        $this->ruleMsgMapping = $mapping;
+        return $this;
     }
 
     /**
@@ -205,13 +211,13 @@ class Error
      * 组装默认错误消息
      * @return mixed|string
      */
-    private function parserDefaultErrorMsg()
+    private function parserRuleMsg()
     {
         $fieldName = empty($this->fieldAlias) ? $this->field : $this->fieldAlias;
-        if (!isset($this->defaultErrorMsg[$this->errorRule])) {
+        if (!isset($this->ruleMsgMapping[$this->errorRule])) {
             return "{$fieldName}参数错误";
         }
-        $defaultErrorTpl = $this->defaultErrorMsg[$this->errorRule];
+        $defaultErrorTpl = $this->ruleMsgMapping[$this->errorRule];
         $errorMsg = str_replace(':fieldName', $fieldName, $defaultErrorTpl);
 
         if (in_array($this->errorRule, ['equalWithColumn', 'differentWithColumn', 'lessThanWithColumn', 'greaterThanWithColumn'])) {
