@@ -4,7 +4,7 @@ namespace EasySwoole\Validate\tests;
 
 /**
  * 最小长度测试用例
- * Class LengthMinTest
+ * Class mbLengthMinTest
  *
  * @internal
  */
@@ -19,7 +19,7 @@ class MbLengthMinTest extends BaseTestCase
          * int
          */
         $this->freeValidate();
-        $this->validate->addColumn('name')->lengthMin(2);
+        $this->validate->addColumn('name')->mbLengthMin(2);
         $bool = $this->validate->validate(['name' => "仙士可"]);
         $this->assertTrue($bool);
 
@@ -27,7 +27,7 @@ class MbLengthMinTest extends BaseTestCase
          * 字符串整数
          */
         $this->freeValidate();
-        $this->validate->addColumn('name')->lengthMin(2);
+        $this->validate->addColumn('name')->mbLengthMin(2);
         $bool = $this->validate->validate(['name' => '12']);
         $this->assertTrue($bool);
 
@@ -35,7 +35,7 @@ class MbLengthMinTest extends BaseTestCase
          * 数组
          */
         $this->freeValidate();
-        $this->validate->addColumn('fruit')->lengthMin(2);
+        $this->validate->addColumn('fruit')->mbLengthMin(2);
         $bool = $this->validate->validate(['fruit' => ['apple', 'grape', 'orange']]);
         $this->assertTrue($bool);
 
@@ -43,7 +43,7 @@ class MbLengthMinTest extends BaseTestCase
          * file
          */
         $this->freeValidate();
-        $this->validate->addColumn('file')->lengthMin(1);
+        $this->validate->addColumn('file')->mbLengthMin(1);
         $bool = $this->validate->validate(['file' => (new UploadFile(__DIR__ . '/../res/easyswoole.png', 2, 200))]);
         $this->assertTrue($bool);
     }
@@ -57,7 +57,7 @@ class MbLengthMinTest extends BaseTestCase
          * int
          */
         $this->freeValidate();
-        $this->validate->addColumn('name')->lengthMin(6);
+        $this->validate->addColumn('name')->mbLengthMin(6);
         $bool = $this->validate->validate(['name' => "仙士可"]);
         $this->assertFalse($bool);
         $this->assertEquals('name长度不能小于6', $this->validate->getError()->__toString());
@@ -66,7 +66,7 @@ class MbLengthMinTest extends BaseTestCase
          * 字符串整数
          */
         $this->freeValidate();
-        $this->validate->addColumn('name')->lengthMin(6);
+        $this->validate->addColumn('name')->mbLengthMin(6);
         $bool = $this->validate->validate(['name' => '仙士可']);
         $this->assertFalse($bool);
         $this->assertEquals('name长度不能小于6', $this->validate->getError()->__toString());
@@ -75,7 +75,7 @@ class MbLengthMinTest extends BaseTestCase
          * 数组
          */
         $this->freeValidate();
-        $this->validate->addColumn('fruit')->lengthMin(6);
+        $this->validate->addColumn('fruit')->mbLengthMin(6);
         $bool = $this->validate->validate(['fruit' => ['apple', 'grape', 'orange', 'banana']]);
         $this->assertFalse($bool);
         $this->assertEquals('fruit长度不能小于6', $this->validate->getError()->__toString());
@@ -84,7 +84,7 @@ class MbLengthMinTest extends BaseTestCase
          * 对象
          */
         $this->freeValidate();
-        $this->validate->addColumn('fruit')->lengthMin(6);
+        $this->validate->addColumn('fruit')->mbLengthMin(6);
         $bool = $this->validate->validate(['fruit' => (object)['apple', 'grape', 'orange', 'banana']]);
         $this->assertFalse($bool);
         $this->assertEquals('fruit长度不能小于6', $this->validate->getError()->__toString());
@@ -96,7 +96,7 @@ class MbLengthMinTest extends BaseTestCase
     public function testCustomErrorMsgCase()
     {
         $this->freeValidate();
-        $this->validate->addColumn('name')->lengthMin(6, '名字长度最少6位');
+        $this->validate->addColumn('name')->mbLengthMin(6, '名字长度最少6位');
         $bool = $this->validate->validate(['name' => 'blank']);
         $this->assertFalse($bool);
         $this->assertEquals('名字长度最少6位', $this->validate->getError()->__toString());
