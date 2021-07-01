@@ -410,6 +410,21 @@ class Rule
     }
 
     /**
+     * 验证数组或字符串的长度(中文版)
+     * @param null $msg
+     * @return $this
+     */
+    public function mbLength(int $len, $msg = null)
+    {
+        $this->ruleMap['mbLength'] = [
+            'msg' => $msg,
+            'arg' => $len,
+        ];
+
+        return $this;
+    }
+
+    /**
      * 验证数组或字符串的长度是否超出
      * @param null $msg
      * @return $this
@@ -417,6 +432,21 @@ class Rule
     public function lengthMax(int $lengthMax, $msg = null)
     {
         $this->ruleMap['lengthMax'] = [
+            'msg' => $msg,
+            'arg' => $lengthMax,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * 验证数组或字符串的长度是否超出(中文版)
+     * @param null $msg
+     * @return $this
+     */
+    public function mbLengthMax(int $lengthMax, $msg = null)
+    {
+        $this->ruleMap['mbLengthMax'] = [
             'msg' => $msg,
             'arg' => $lengthMax,
         ];
@@ -440,6 +470,21 @@ class Rule
     }
 
     /**
+     * 验证数组或字符串的长度是否达到(中文版)
+     * @param null $msg
+     * @return $this
+     */
+    public function mbLengthMin(int $lengthMin, $msg = null)
+    {
+        $this->ruleMap['mbLengthMin'] = [
+            'msg' => $msg,
+            'arg' => $lengthMin,
+        ];
+
+        return $this;
+    }
+
+    /**
      * 验证数组或字符串的长度是否在一个范围内
      * @param null $msg
      * @return $this
@@ -447,6 +492,24 @@ class Rule
     public function betweenLen(int $min, int $max, $msg = null)
     {
         $this->ruleMap['betweenLen'] = [
+            'msg' => $msg,
+            'arg' => [
+                $min,
+                $max,
+            ],
+        ];
+
+        return $this;
+    }
+
+    /**
+     * 验证数组或字符串的长度是否在一个范围内(中文版)
+     * @param null $msg
+     * @return $this
+     */
+    public function betweenMbLen(int $min, int $max, $msg = null)
+    {
+        $this->ruleMap['betweenMbLen'] = [
             'msg' => $msg,
             'arg' => [
                 $min,
