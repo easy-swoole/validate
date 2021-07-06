@@ -17,34 +17,21 @@ class BetweenLen extends AbstractValidateFunction
         $min = array_shift($arg);
         $max = array_shift($arg);
 
-        switch ($itemData) {
-            case is_numeric($itemData) || is_string($itemData):
-            {
-                if (strlen($itemData) >= $min && strlen($itemData) <= $max) {
-                    return true;
-                }
-
-                return false;
+        if (is_numeric($itemData) || is_string($itemData)) {
+            if (strlen($itemData) >= $min && strlen($itemData) <= $max) {
+                return true;
             }
-            case is_array($itemData):
-            {
-                if (count($itemData) >= $min && count($itemData) <= $max) {
-                    return true;
-                }
-
-                return false;
+        } elseif (is_array($itemData)) {
+            if (count($itemData) >= $min && count($itemData) <= $max) {
+                return true;
             }
-            case $itemData instanceof UploadedFileInterface:
-            {
-                $size = $itemData->getSize();
-                if ($size >= $min && $size <= $max) {
-                    return true;
-                }
-
-                return false;
+        } elseif ($itemData instanceof UploadedFileInterface) {
+            $size = $itemData->getSize();
+            if ($size >= $min && $size <= $max) {
+                return true;
             }
-            default:
-                return false;
         }
+
+        return false;
     }
 }
