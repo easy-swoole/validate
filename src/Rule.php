@@ -770,4 +770,13 @@ class Rule
 
         return $this;
     }
+
+    public function setRuleMsg(string $rule,string $msg): Rule
+    {
+        if(isset($this->ruleMap[$rule])){
+            $this->ruleMap[$rule]['msg'] = $msg;
+        }
+
+        return $this;
+    }
 }
