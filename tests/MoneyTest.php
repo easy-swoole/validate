@@ -29,7 +29,6 @@ class MoneyTest extends BaseTestCase
     public function testDefaultErrorMsgCase()
     {
         $this->freeValidate();
-        $this->freeValidate();
         $this->validate->addColumn('no')->money(2);
         $bool = $this->validate->validate(['no' => 1234]);
         $this->assertFalse($bool);
@@ -42,10 +41,27 @@ class MoneyTest extends BaseTestCase
     public function testCustomErrorMsgCase()
     {
         $this->freeValidate();
-        $this->freeValidate();
         $this->validate->addColumn('no')->money(2, 'no必须是合法的金额!');
         $bool = $this->validate->validate(['no' => 1161709455.999]);
         $this->assertFalse($bool);
         $this->assertEquals('no必须是合法的金额!', $this->validate->getError()->__toString());
+    }
+
+    /*
+     * 验证整数金额
+     */
+    public function testValidateIntegerMoneyCase()
+    {
+        $this->freeValidate();
+        $this->validate->addColumn('no')->money(0, 'no必须是合法的金额!');
+        $bool = $this->validate->validate(['no' => 110.01]);
+        $this->assertFalse($bool);
+        $this->assertEquals('no必须是合法的金额!', $this->validate->getError()->__toString());
+
+        $this->freeValidate();
+        $this->validate->addColumn('no')->money(0, 'no必须是合法的金额!');
+        $bool = $this->validate->validate(['no' => 110]);
+        $this->assertTrue($bool);
+        $this->assertNull($this->validate->getError());
     }
 }

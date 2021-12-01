@@ -20,6 +20,10 @@ class Money extends AbstractValidateFunction
 
         $regex = "/^-?(([1-9]\d*)|0)\.\d{1,$arg}$/";
 
+        if ($arg === 0) {
+            $regex = "/^-?(([1-9]\d*)|0)$/";
+        }
+
         return (new Regex())->validate($itemData, $regex, $column, $validate);
     }
 }
